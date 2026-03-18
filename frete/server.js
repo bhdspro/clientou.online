@@ -42,10 +42,10 @@ app.post('/send-message', async (req, res) => {
         `- *Cliente:* ${data.name ? data.name.toUpperCase() : 'NÃO INFORMADO'}\n` +
         `- *WhatsApp:* ${data.phone}\n\n` +
         `Clique no link para entrar em contato: ${waLink}\n\n` +
-        `- *Tipo de Frete:* ${data.type} - ${data.model}\n` +
+        `- *Tipo de Frete:* ${data.type} - ${data.model}\n\n` +
         `- *Local de Origem:* ${data.origin}\n` +
         `- *Local de Destino:* ${data.destination}\n` +
-        `- *Acesso Fácil:* ${data.issue}\n\n` +
+        `- *Área Acessível:* ${data.issue}\n\n` +
         `- *Ajudante:* ${data.helper}\n` +
         `- *Quando Retirar:* ${data.schedule}\n` +
         `- *Forma de Pagamento:* ${data.payment}\n` +
