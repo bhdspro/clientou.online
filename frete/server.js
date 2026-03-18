@@ -42,7 +42,7 @@ app.post('/send-message', async (req, res) => {
         `- *Cliente:* ${data.name ? data.name.toUpperCase() : 'NÃO INFORMADO'}\n` +
         `- *WhatsApp:* ${data.phone}\n\n` +
         `Clique no link para entrar em contato: ${waLink}\n\n` +
-        `- *Tipo de Local:* ${data.type} - ${data.model}\n` +
+        `- *Tipo de Frete:* ${data.type} - ${data.model}\n` +
         `- *Local de Origem:* ${data.origin}\n` +
         `- *Local de Destino:* ${data.destination}\n` +
         `- *Acesso Fácil:* ${data.issue}\n\n` +
@@ -78,5 +78,5 @@ app.post('/send-message', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`CLIENTOU Frete Backend ativo na porta ${PORT}`);
+    console.log(`CLIENTOU! FRETE Backend ativo na porta ${PORT}`);
 });
