@@ -46,7 +46,7 @@ app.post('/send-message', async (req, res) => {
         `- *Local de Origem:* ${data.origin}\n` +
         `- *Local de Destino:* ${data.destination}\n` +
         `- *Área Acessível:* ${data.issue}\n\n` +
-        `- *Ajudante:* ${data.helper}\n` +
+        `- *Precisa de Ajudante:* ${data.helper}\n` +
         `- *Quando Retirar:* ${data.schedule}\n` +
         `- *Forma de Pagamento:* ${data.payment}\n` +
         `- *Observações:* ${data.notes || 'Nenhuma'}\n\n` +
