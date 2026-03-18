@@ -99,15 +99,15 @@
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide text-[11px]">Tipo de Frete</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button type="button" onclick="selectType('Apenas Caixas')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                        <button type="button" data-value="Apenas Caixas" onclick="selectType('Apenas Caixas')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
                             <i data-lucide="package" class="w-6 h-6"></i>
                             <span class="text-[10px] sm:text-xs font-bold text-center">Apenas<br>Caixas</span>
                         </button>
-                        <button type="button" onclick="selectType('Alguns Móveis')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                        <button type="button" data-value="Alguns Móveis" onclick="selectType('Alguns Móveis')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
                             <i data-lucide="armchair" class="w-6 h-6"></i>
                             <span class="text-[10px] sm:text-xs font-bold text-center">Alguns<br>Móveis</span>
                         </button>
-                        <button type="button" onclick="selectType('Frete Grande')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                        <button type="button" data-value="Frete Grande" onclick="selectType('Frete Grande')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
                             <i data-lucide="truck" class="w-6 h-6"></i>
                             <span class="text-[10px] sm:text-xs font-bold text-center">Frete<br>Grande</span>
                         </button>
@@ -157,11 +157,11 @@
                             <i data-lucide="x" class="w-6 h-6"></i>
                             <span class="text-xs font-bold text-center">Não</span>
                         </button>
-                        <button type="button" data-value="Um Ajudante" onclick="selectHelper('Sim! Um Ajudante')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                        <button type="button" data-value="Sim! Um Ajudante" onclick="selectHelper('Sim! Um Ajudante')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
                             <i data-lucide="user" class="w-6 h-6"></i>
                             <span class="text-[10px] sm:text-xs font-bold text-center">Um<br>Ajudante</span>
                         </button>
-                        <button type="button" data-value="Mais Ajudantes" onclick="selectHelper('Sim! Vários Ajudantes')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                        <button type="button" data-value="Sim! Vários Ajudantes" onclick="selectHelper('Sim! Vários Ajudantes')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
                             <i data-lucide="users" class="w-6 h-6"></i>
                             <span class="text-[10px] sm:text-xs font-bold text-center">Vários<br>Ajudantes</span>
                         </button>
@@ -270,7 +270,7 @@
             selectedType = type;
             document.getElementById('vehicleType').value = type;
             document.querySelectorAll('.option-card').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.includes(type) || (type === 'Caixa/Outros' && btn.textContent.includes('Outros')));
+                btn.classList.toggle('active', btn.dataset.value === type);
             });
         }
 
