@@ -8,7 +8,7 @@ app.use(express.json());
 // CONFIGURAÇÃO DE SEGURANÇA (CORS)
 // Permite acesso do seu site e também de testes locais
 app.use(cors({
-    origin: ['https://clientou.grupobhds.com', 'http://clientou.grupobhds.com', 'http://127.0.0.1:5500', 'http://localhost:3000']
+    origin: ['https://clientou.grupobhds.com', 'http://clientou.grupobhds.com', 'http://127.0.0.1:5500', 'http://localhost:3000', 'https://clientou.online', 'http://clientou.online']
 }));
 
 /**
@@ -53,14 +53,15 @@ app.post('/send-message', async (req, res) => {
         `- *Cliente:* ${data.name ? data.name.toUpperCase() : 'NÃO INFORMADO'}\n` +
         `- *WhatsApp:* ${data.phone}\n\n` +
         `Clique no link para entrar em contato: ${waLink}\n\n` +
-        `- *Veículo:* ${data.type} - ${data.model}\n` +
+        `- *Tipo de Local:* ${data.type} - ${data.model}\n` +
         `- *Local de Origem:* ${data.origin}\n` +
         `- *Local de Destino:* ${data.destination}\n` +
-        `- *Problema:* ${data.issue}\n\n` +
+        `- *Acesso Fácil:* ${data.issue}\n\n` +
+	`- *Ajudante:*
         `- *Quando Retirar:* ${data.schedule}\n` +
         `- *Forma de Pagamento:* ${data.payment}\n` +
         `- *Observações:* ${data.notes || 'Nenhuma'}\n\n` +
-        `⚠️ *Atenção:* O cliente está sem guincho agora. Entre em contato imediatamente para pegar o serviço. ​Boas vendas!`;
+        `⚠️ *Atenção:* O cliente solicitou o frete agora. Entre em contato imediatamente para pegar o serviço. ​Boas vendas!`;
 
     try {
         // MONTAGEM DA URL

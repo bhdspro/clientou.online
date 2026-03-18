@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 
-	<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17688764045"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17688764045"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -13,20 +13,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frete - Clientou!</title>
-    <meta name="description" content="Precisa de Guincho Agora? Reboque rápido para Carros e Motos. Atendimento 24 Horas. Preço Justo. Chegamos rápido! Clique e solicite socorro imediato.">
-    <meta name="keywords" content="guincho, guincho 24h, reboque, auto socorro, guincho barato, guincho perto de mim, guincho moto, guincho carro, telefone guincho, plataforma, socorro mecânico">
+    <meta name="description" content="Precisa de Frete? Transporte rápido, seguro e com preço justo. Chegamos rápido! Clique e solicite seu orçamento imediato.">
+    <meta name="keywords" content="frete, carreto, transporte, frete barato, carreto perto de mim, utilitário para frete">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Solicitar Guincho Agora - Chegamos Rápido!">
-    <meta property="og:description" content="Carro ou Moto quebrada? Solicite seu guincho em 1 clique. Atendimento imediato na sua localização.">
+    <meta property="og:title" content="Solicitar Frete Agora - Rápido e Seguro!">
+    <meta property="og:description" content="Precisa de um frete? Solicite em 1 clique.">
     <meta property="og:type" content="website">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "AutomotiveBusiness",
-      "name": "Clientou! Guincho 24h",
+      "@type": "LocalBusiness",
+      "name": "Clientou! Fretes",
       "image": "",
-      "description": "Serviço de guincho e reboque 24 horas para carros e motos.",
+      "description": "Serviço de frete e carreto rápido.",
       "telephone": "+5500000000000",
       "priceRange": "$",
       "address": {
@@ -47,6 +47,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .option-card.active { border-color: #2563eb; background-color: #eff6ff; border-width: 2px; }
+        .helper-card.active { border-color: #2563eb; background-color: #eff6ff; border-width: 2px; }
         .payment-card.active { background-color: #2563eb; color: white; border-color: #2563eb; }
         .expandable { transition: all 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
         .expandable.open { max-height: 200px; opacity: 1; margin-top: 0.5rem; }
@@ -55,9 +56,9 @@
 <body class="bg-slate-50 text-slate-900 min-h-screen pb-12">
 
     <div class="sr-only">
-        <h1>Guincho 24 Horas</h1>
-        <h2>Reboque de Carro e Moto</h2>
-        <p>Serviço de guincho barato, guincho plataforma, socorro de bateria, pane seca, troca de pneu. Atendemos em todas as regiões. Guincho zona norte, guincho zona sul, guincho zona leste, guincho zona oeste, guincho centro. Telefone de guincho emergência.</p>
+        <h1>Frete Rápido</h1>
+        <h2>Transporte de Cargas e Mercadorias</h2>
+        <p>Serviço de frete barato, carreto, utilitário para frete. Atendemos em todas as regiões.</p>
     </div>
 
     <header class="bg-white border-b sticky top-0 z-50 shadow-sm">
@@ -76,7 +77,7 @@
                 <p class="text-slate-500 text-sm">Rapidez, Economia e Facilidade no Pagamento</p>
             </div>
 
-            <form id="towForm" class="space-y-6">
+            <form id="freteForm" class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide text-[11px]">Seu Nome</label>
                     <input type="text" id="name" required placeholder="Como você chama?" 
@@ -98,16 +99,16 @@
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide text-[11px]">Tipo de Local</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button type="button" onclick="selectType('Carro')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
-                            <i data-lucide="car" class="w-6 h-6"></i>
+                        <button type="button" onclick="selectType('Casa')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="home" class="w-6 h-6"></i>
                             <span class="text-xs font-bold">Casa</span>
                         </button>
-                        <button type="button" onclick="selectType('Moto')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
-                            <i data-lucide="bike" class="w-6 h-6"></i>
-                            <span class="text-xs font-bold">Apartamento</span>
+                        <button type="button" onclick="selectType('Apartamento')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="building-2" class="w-6 h-6"></i>
+                            <span class="text-[10px] sm:text-xs font-bold">Apartamento</span>
                         </button>
-                        <button type="button" onclick="selectType('Outro')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
-                            <i data-lucide="truck" class="w-6 h-6"></i>
+                        <button type="button" onclick="selectType('Caixa/Outros')" class="option-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="package" class="w-6 h-6"></i>
                             <span class="text-xs font-bold">Outros</span>
                         </button>
                     </div>
@@ -146,6 +147,26 @@
                     <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide text-[11px]">Possui elevador ou escada? Explique</label>
                     <textarea id="issue" rows="2" placeholder="Exemplo: Escada no andar 2 do endereço de destino, elevador na entrada ao lado direito, etc..." 
                         class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all resize-none text-sm"></textarea>
+                </div>
+
+                <!-- NOVA SEÇÃO: AJUDANTE -->
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide text-[11px]">Precisa de Ajudante?</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button type="button" data-value="Não" onclick="selectHelper('Não')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                            <span class="text-xs font-bold text-center">Não</span>
+                        </button>
+                        <button type="button" data-value="1 Ajudante" onclick="selectHelper('1 Ajudante')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="user" class="w-6 h-6"></i>
+                            <span class="text-[10px] sm:text-xs font-bold text-center">1 Ajudante</span>
+                        </button>
+                        <button type="button" data-value="Mais Ajudantes" onclick="selectHelper('Mais Ajudantes')" class="helper-card border-2 border-slate-100 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-slate-50">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                            <span class="text-[10px] sm:text-xs font-bold text-center">Mais<br>Ajudantes</span>
+                        </button>
+                    </div>
+                    <input type="hidden" id="helperRequired" required>
                 </div>
 
                 <div>
@@ -240,6 +261,7 @@
         lucide.createIcons();
 
         let selectedType = '';
+        let selectedHelper = ''; // Nova variável para ajudantes
         let selectedPayment = ''; 
         let selectedCardDetail = ''; 
         let schedule = 'AGORA';
@@ -248,7 +270,16 @@
             selectedType = type;
             document.getElementById('vehicleType').value = type;
             document.querySelectorAll('.option-card').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.includes(type));
+                btn.classList.toggle('active', btn.textContent.includes(type) || (type === 'Caixa/Outros' && btn.textContent.includes('Outros')));
+            });
+        }
+
+        // Nova função para selecionar o Ajudante
+        function selectHelper(helper) {
+            selectedHelper = helper;
+            document.getElementById('helperRequired').value = helper;
+            document.querySelectorAll('.helper-card').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === helper);
             });
         }
 
@@ -336,10 +367,11 @@
             }
         }
 
-        document.getElementById('towForm').onsubmit = async (e) => {
+        document.getElementById('freteForm').onsubmit = async (e) => {
             e.preventDefault();
             
             if(!selectedType) { alert("Selecione o tipo de local."); return; }
+            if(!selectedHelper) { alert("Selecione se precisa de ajudante."); return; } // Validação do Ajudante
             if(!selectedPayment) { alert("Selecione a forma de pagamento."); return; }
             
             let finalPaymentString = selectedPayment;
@@ -370,13 +402,14 @@
                 origin: document.getElementById('origin').value,
                 destination: document.getElementById('destination').value,
                 issue: document.getElementById('issue').value,
+                helper: selectedHelper, // Envia o dado do ajudante para o backend
                 schedule: schedule === 'AGORA' ? 'Agora (Imediato)' : document.getElementById('scheduleDate').value,
                 payment: finalPaymentString, 
                 notes: document.getElementById('notes').value
             };
 
             try {
-                const BACKEND_URL = 'https://clientou-guincho.onrender.com/send-message';
+                const BACKEND_URL = 'https://clientou-frete.onrender.com/send-message';
                 
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
@@ -385,14 +418,13 @@
                 });
 
                 if (response.ok) {
-				
-					gtag('event', 'conversion', {
-						  'send_to': 'AW-17688764045/gWQtCKnghfgbEI291PJB',
-						  'value': 1.0,
-						  'currency': 'BRL',
-						  'transaction_id': ''
-					});
-				  
+                    // Google Ads Conversion tracking code
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-17688764045/gWQtCKnghfgbEI291PJB',
+                        'value': 1.0,
+                        'currency': 'BRL',
+                        'transaction_id': ''
+                    });
                     document.getElementById('successModal').classList.remove('hidden');
                 } else {
                     alert("Ocorreu um erro no servidor. Tente novamente.");
