@@ -6,7 +6,6 @@ const app = express();
 app.use(express.json());
 
 // CONFIGURAÇÃO DE SEGURANÇA (CORS)
-// Permite acesso do seu site e também de testes locais
 app.use(cors({
     origin: ['https://clientou.grupobhds.com', 'http://clientou.grupobhds.com', 'http://127.0.0.1:5500', 'http://localhost:3000', 'https://clientou.online', 'http://clientou.online']
 }));
@@ -15,26 +14,16 @@ app.use(cors({
  * ------------------------------------------------------------------
  * DADOS DA GREEN-API - VIA VARIÁVEIS DE AMBIENTE (RENDER)
  * ------------------------------------------------------------------
- * Configure estas chaves na aba "Environment" do seu serviço no Render.
  */
-
-// 1. API URL (Ex: https://7103.api.greenapi.com)
 const API_HOST_URL = process.env.API_HOST_URL; 
-
-// 2. ID da Instância
 const ID_INSTANCE = process.env.ID_INSTANCE;
-
-// 3. Token da Instância
 const API_TOKEN = process.env.API_TOKEN;
-
-// 4. ID do Grupo (@g.us)
 const WHATSAPP_GROUP_ID = process.env.WHATSAPP_GROUP_ID; 
-
 
 app.post('/send-message', async (req, res) => {
     const data = req.body;
 
-    // Verificação de segurança simples para garantir que as variáveis existem
+    // Verificação de segurança
     if (!API_HOST_URL || !ID_INSTANCE || !API_TOKEN || !WHATSAPP_GROUP_ID) {
         console.error("ERRO: Variáveis de ambiente não configuradas no Render.");
         return res.status(500).json({ 
@@ -57,14 +46,13 @@ app.post('/send-message', async (req, res) => {
         `- *Local de Origem:* ${data.origin}\n` +
         `- *Local de Destino:* ${data.destination}\n` +
         `- *Acesso Fácil:* ${data.issue}\n\n` +
-	`- *Ajudante:*
+        `- *Ajudante:* ${data.helper}\n` +
         `- *Quando Retirar:* ${data.schedule}\n` +
         `- *Forma de Pagamento:* ${data.payment}\n` +
         `- *Observações:* ${data.notes || 'Nenhuma'}\n\n` +
         `⚠️ *Atenção:* O cliente solicitou o frete agora. Entre em contato imediatamente para pegar o serviço. ​Boas vendas!`;
 
     try {
-        // MONTAGEM DA URL
         const url = `${API_HOST_URL}/waInstance${ID_INSTANCE}/sendMessage/${API_TOKEN}`;
         
         console.log("Tentando enviar mensagem...");
@@ -90,5 +78,5 @@ app.post('/send-message', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`CLIENTOU Backend ativo na porta ${PORT}`);
+    console.log(`CLIENTOU Frete Backend ativo na porta ${PORT}`);
 });

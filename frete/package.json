@@ -1,7 +1,7 @@
 {
-  "name": "clientou-backend",
+  "name": "clientou-frete-backend",
   "version": "1.0.0",
-  "description": "API de integração CLIENTOU com GREEN-API",
+  "description": "API de integração CLIENTOU FRETE com GREEN-API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -16,7 +16,8 @@
   },
   "keywords": [
     "clientou",
-    "guincho",
+    "frete",
+    "mudanca",
     "whatsapp",
     "api"
   ],
