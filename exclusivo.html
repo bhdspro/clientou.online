@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos - Clientou!</title>
+    <!-- Se quiser que a página apareça no Google, apague a linha abaixo -->
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Biblioteca segura e offline para gerar o QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .plan-card { transition: all 0.3s ease; cursor: pointer; border-width: 2px; border-color: transparent; }
+        .plan-card:hover { transform: translateY(-2px); }
+        .plan-card.active { border-color: #2563eb; background-color: #f8fafc; }
+        .plan-card.active .check-icon { opacity: 1; transform: scale(1); }
+        .check-icon { transition: all 0.3s ease; opacity: 0; transform: scale(0.5); }
+        
+        .expandable { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: 0; opacity: 0; overflow: hidden; }
+        .expandable.open { max-height: 800px; opacity: 1; margin-top: 1.5rem; }
+
+        /* Custom Scrollbar for the input */
+        .pix-input::-webkit-scrollbar { height: 4px; }
+        .pix-input::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-600 tracking-tighter">CLIENTOU!</h1>
+                <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 mt-6">
+        
+        <!-- Título -->
+        <div class="mb-6">
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">Escolha seu Plano</h2>
+            <p class="text-slate-500 text-sm mt-1">Selecione o melhor pacote para o seu negócio crescer.</p>
+        </div>
+
+        <!-- Opções de Planos -->
+        <div class="space-y-4">
+            
+            <!-- PLANO MAIS PREMIUM -->
+            <div onclick="selectPlan('PMP26', 26.00)" id="card-PMP26" class="plan-card bg-white rounded-3xl shadow-lg border border-slate-100 p-6 relative overflow-hidden">
+                <div class="absolute top-4 right-4 text-blue-600 check-icon bg-blue-100 p-1 rounded-full">
+                    <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+                </div>
+                
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-inner">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg text-slate-800 uppercase tracking-tight">Mais Premium</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pagamento Único</p>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <span class="text-3xl font-black text-blue-600">R$ 26</span>
+                    <span class="text-sm font-bold text-slate-400">,00</span>
+                </div>
+
+                <ul class="space-y-3 text-sm text-slate-600 font-medium">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Página Personalizada com sua Marca
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Redes Sociais do seu Negócio
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Botão do seu Google Meu Negócio
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Outras Personalizações
+                    </li>
+                </ul>
+            </div>
+
+            <!-- PLANO MAIS CLIENTES -->
+            <div onclick="selectPlan('PMC58', 58.00)" id="card-PMC58" class="plan-card bg-white rounded-3xl shadow-lg border border-slate-100 p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-gradient-to-l from-green-500 to-emerald-400 text-white text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest shadow-sm">
+                    Recomendado
+                </div>
+                <div class="absolute top-6 right-4 text-blue-600 check-icon bg-blue-100 p-1 rounded-full">
+                    <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+                </div>
+
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg text-slate-800 uppercase tracking-tight">Mais Clientes</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assinatura Mensal</p>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <span class="text-3xl font-black text-blue-600">R$ 58</span>
+                    <span class="text-sm font-bold text-slate-400">,00 / mês</span>
+                </div>
+
+                <ul class="space-y-3 text-sm text-slate-600 font-medium">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Novos clientes diariamente no Grupo
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Grupo Exclusivo de Novos Clientes
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+                        Sem fidelidade! Cancele quando quiser
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Área de Checkout (Abre ao selecionar um plano) -->
+        <div id="checkout-section" class="expandable">
+            <div class="bg-white rounded-3xl shadow-xl border border-blue-100 p-6 relative">
+                
+                <h3 class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="smartphone" class="w-4 h-4"></i> Informe seu WhatsApp corretamente
+                </h3>
+
+                <div class="mb-5">
+                    <p class="text-xs text-slate-500 mb-2 font-medium">Precisamos do seu número para vincular ao pagamento do plano <b id="selected-plan-name" class="text-slate-800"></b>.</p>
+                    <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" maxlength="15"
+                        class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-blue-500 focus:bg-white outline-none transition-all text-lg font-bold text-slate-800 tracking-wide text-center">
+                </div>
+
+                <button type="button" id="btn-generate-pix" onclick="processPayment()" 
+                    class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-wider">
+                    <i data-lucide="qr-code" class="w-5 h-5"></i>
+                    GERAR PIX
+                </button>
+
+                <!-- Área do QR Code (Escondida inicialmente) -->
+                <div id="pix-area" class="hidden mt-6 pt-6 border-t border-slate-100">
+                    <div class="text-center mb-4">
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Pix Gerado!</span>
+                        <p class="text-sm text-slate-600 font-medium">Escaneie o QR Code abaixo ou copie o código para pagar no aplicativo do seu banco.</p>
+                    </div>
+
+                    <div class="bg-white p-2 rounded-2xl border border-slate-200 w-48 h-48 mx-auto mb-6 shadow-sm flex items-center justify-center">
+                        <!-- O QR Code será desenhado dentro desta div -->
+                        <div id="qr-code-img" class="hidden w-full h-full flex items-center justify-center"></div>
+                        <div id="qr-loading" class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    </div>
+
+                    <div class="relative">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Pix Copia e Cola</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="pix-payload" readonly 
+                                class="pix-input w-full px-4 py-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500 font-mono outline-none overflow-x-auto whitespace-nowrap">
+                            <button onclick="copyPix()" id="btn-copy" class="h-[50px] px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-md shadow-blue-200 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Botão de Dúvidas -->
+        <div class="mt-5 pt-5 border-t border-slate-200">
+            <a href="https://wa.me/5543991228540?text=Ol%C3%A1%21%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20os%20planos%20do%20Clientou." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-4 rounded-xl shadow-sm border border-blue-200 hover:bg-blue-600 hover:text-white transition-all transform active:scale-95 text-sm uppercase tracking-wide w-full justify-center">
+                <i data-lucide="message-circle" class="w-5 h-5 text-[#25D366] fill-[#25D366]"></i>
+                Dúvidas? Chame no WhatsApp
+            </a>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="mt-8 text-center">
+            <div class="flex justify-center gap-4 mt-2 opacity-30 grayscale mb-3">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                <i data-lucide="lock" class="w-5 h-5"></i>
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </div>
+            <p class="text-slate-400 text-[10px] uppercase font-bold tracking-[0.2em]">© 2026 Clientou! • Todos os direitos reservados</p>
+        </div>
+
+    </main>
+
+    <script>
+        // Inicializa ícones
+        lucide.createIcons();
+
+        let currentPlan = null;
+        let currentPrice = 0;
+
+        // Máscara para o WhatsApp
+        document.getElementById('whatsapp').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+            
+            // Se o usuário apagar o número, reseta a área do PIX
+            if(e.target.value.length < 14) {
+                document.getElementById('pix-area').classList.add('hidden');
+                document.getElementById('btn-generate-pix').classList.remove('hidden');
+            }
+        });
+
+        // Seleção de Plano
+        function selectPlan(planCode, price) {
+            currentPlan = planCode;
+            currentPrice = price;
+
+            // Atualiza UI dos cards
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`card-${planCode}`).classList.add('active');
+
+            // Atualiza textos
+            const planName = planCode === 'PMP26' ? 'Mais Premium' : 'Mais Clientes';
+            document.getElementById('selected-plan-name').innerText = planName;
+
+            // Reseta área de checkout
+            document.getElementById('whatsapp').value = '';
+            document.getElementById('pix-area').classList.add('hidden');
+            document.getElementById('btn-generate-pix').classList.remove('hidden');
+
+            // Abre a seção de checkout
+            const checkoutSec = document.getElementById('checkout-section');
+            checkoutSec.classList.add('open');
+            
+            // Scroll suave
+            setTimeout(() => {
+                checkoutSec.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        // Processar Pagamento e Gerar Pix
+        function processPayment() {
+            const phoneInput = document.getElementById('whatsapp').value;
+            const cleanPhone = phoneInput.replace(/\D/g, '');
+
+            // Validação simples
+            if (cleanPhone.length < 10) {
+                alert("Por favor, preencha seu WhatsApp corretamente com o DDD.");
+                document.getElementById('whatsapp').focus();
+                return;
+            }
+
+            // Esconde botão e mostra área do QR Code
+            document.getElementById('btn-generate-pix').classList.add('hidden');
+            const pixArea = document.getElementById('pix-area');
+            pixArea.classList.remove('hidden');
+
+            // Montar o Payload PIX com o WhatsApp na descrição
+            const pixString = buildPixPayload(currentPlan, currentPrice, cleanPhone);
+            
+            // Exibir código no input
+            document.getElementById('pix-payload').value = pixString;
+
+            // Gerar QR Code LOCALMENTE (Sem API externa)
+            const qrContainer = document.getElementById('qr-code-img');
+            const qrLoading = document.getElementById('qr-loading');
+            
+            // Limpa QR Code anterior se existir
+            qrContainer.innerHTML = '';
+            qrContainer.classList.add('hidden');
+            qrLoading.classList.remove('hidden');
+
+            // Timeout rápido apenas para efeito visual de carregamento
+            setTimeout(() => {
+                // Revelar o contentor antes da geração garante que a biblioteca consegue
+                // calcular as dimensões e desenhar o canvas corretamente em qualquer ecrã
+                qrLoading.classList.add('hidden');
+                qrContainer.classList.remove('hidden');
+                
+                new QRCode(qrContainer, {
+                    text: pixString,
+                    width: 170,
+                    height: 170,
+                    colorDark : "#0f172a", // Cor escura padrão (slate-900)
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+            }, 600);
+        }
+
+        // Copiar PIX
+        function copyPix() {
+            const copyInput = document.getElementById('pix-payload');
+            copyInput.select();
+            copyInput.setSelectionRange(0, 99999); // Para mobile
+
+            try {
+                document.execCommand('copy');
+                
+                // Feedback visual no botão
+                const btnCopy = document.getElementById('btn-copy');
+                const originalHtml = btnCopy.innerHTML;
+                
+                btnCopy.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i>';
+                btnCopy.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                btnCopy.classList.add('bg-green-500', 'hover:bg-green-600');
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    btnCopy.innerHTML = originalHtml;
+                    btnCopy.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    btnCopy.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    lucide.createIcons();
+                }, 2000);
+
+            } catch (err) {
+                alert('Erro ao copiar o código. Tente selecionar e copiar manualmente.');
+            }
+        }
+
+        /**
+         * FUNÇÃO DE CONSTRUÇÃO DO PIX (EMVCo)
+         * Remonta a string PIX inserindo a descrição personalizada (Plano + WhatsApp)
+         * e calcula automaticamente o CRC16 obrigatório no final.
+         */
+        function buildPixPayload(planId, price, phone) {
+            // 1. Descrição (Ex: Clientou PMP26 - 43988417004)
+            const description = `Clientou ${planId} - ${phone}`;
+            const descLen = description.length.toString().padStart(2, '0');
+            
+            // 2. Montar tag 26 (Merchant Account Information)
+            const gui = "0014br.gov.bcb.pix";
+            const chave = "0124financeiro@grupobhds.com";
+            const infoAdicional = `02${descLen}${description}`;
+            
+            const tag26Content = gui + chave + infoAdicional;
+            const tag26Len = tag26Content.length.toString().padStart(2, '0');
+            const tag26 = `26${tag26Len}${tag26Content}`;
+
+            // 3. Montar Preço (Tag 54)
+            const priceStr = price.toFixed(2);
+            const priceLen = priceStr.length.toString().padStart(2, '0');
+            const tag54 = `54${priceLen}${priceStr}`;
+
+            // 4. Montar a base do Payload até o campo CRC
+            // Constantes do recebedor já fixadas conforme exemplo fornecido
+            let payload = `000201010211${tag26}520400005303986${tag54}5802BR5918BRUNO H DOS SANTOS6008LONDRINA62070503***6304`;
+
+            // 5. Calcular o Hash CRC16-CCITT (Polinômio 0x1021)
+            let crc = 0xFFFF;
+            for (let c = 0; c < payload.length; c++) {
+                crc ^= payload.charCodeAt(c) << 8;
+                for (let i = 0; i < 8; i++) {
+                    if (crc & 0x8000) {
+                        crc = (crc << 1) ^ 0x1021;
+                    } else {
+                        crc = crc << 1;
+                    }
+                }
+            }
+            
+            // Formatar CRC em Hexadecimal de 4 dígitos em maiúsculo
+            const crcHex = (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+            
+            return payload + crcHex;
+        }
+    </script>
+</body>
+</html>
