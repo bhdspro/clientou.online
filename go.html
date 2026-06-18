@@ -1,23 +1,14 @@
 <!DOCTYPE html>
-<!-- 
-  ============================================================================
-  CLIENTOU! - FRONTEND PREMIUM
-  Resolvido Erro da Biblioteca de QR Code com CDNJS
-  ============================================================================
--->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviços Especializados - Clientou!</title>
-    <!-- FAVICON SVG RAIO -->
+    <title>Prestadores - Clientou! Serviços Especializados</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Biblioteca Segura para Gerar QR Code no Navegador -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
@@ -43,13 +34,11 @@
 </head>
 <body class="min-h-screen pb-12 pt-6 px-4">
 
-    <!-- Ecrã de Loading Inicial -->
     <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
         <div class="spinner mb-4"></div>
         <p class="font-black text-primary text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
     </div>
 
-    <!-- Interface Principal -->
     <main id="mainView" class="max-w-md mx-auto hidden flex-col gap-5">
         
         <header class="text-center mb-2">
@@ -57,8 +46,13 @@
             <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
         </header>
 
-        <!-- Cartão de Contacto -->
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6">
+        <div id="agendadoWarning" class="hidden bg-yellow-50 border border-yellow-200 p-4 rounded-3xl text-center mb-2">
+            <i data-lucide="alert-triangle" class="w-8 h-8 text-yellow-500 mx-auto mb-2"></i>
+            <h3 class="font-black text-yellow-800 text-sm">SERVIÇO INDISPONÍVEL</h3>
+            <p class="text-xs text-yellow-700 mt-1 font-medium leading-tight">Este frete já foi agendado e concluído por outros prestadores. Siga para o próximo.</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6" id="contactCard">
             <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-4">
                 <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary border border-blue-100 shadow-sm">
                     <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
@@ -75,19 +69,36 @@
                         <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
                         <span id="clientPhone" class="font-bold text-lg tracking-wide text-slate-800">A carregar...</span>
                     </div>
-                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
+
+                    <button id="btnPagar" onclick="openPaymentDialog()" class="hidden bg-primary hover:bg-primaryDark text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
                         Desbloquear
                     </button>
+
+                    <button id="btnMostrar" onclick="revealNumber()" class="hidden bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 text-xs font-bold rounded-xl shadow-md uppercase tracking-wide transform active:scale-95 transition-all">
+                        Mostrar
+                    </button>
+
+                    <div id="actionButtons" class="hidden flex gap-2">
+                        <button onclick="goToWhatsApp()" class="bg-green-500 text-white p-2.5 rounded-xl shadow-sm hover:bg-green-600 transform active:scale-95 transition-all">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="goToCall()" class="bg-blue-500 text-white p-2.5 rounded-xl shadow-sm hover:bg-blue-600 transform active:scale-95 transition-all">
+                            <i data-lucide="phone-call" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
                     <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
                     Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m --s</span>
                 </div>
+
+                <button id="btnAgendado" onclick="markAsAgendado()" disabled class="hidden mt-3 w-full bg-slate-200 text-slate-400 font-bold text-xs py-3 rounded-xl border border-slate-300 uppercase tracking-wide transition-all flex justify-center items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado
+                </button>
             </div>
         </div>
 
-        <!-- Cartão de Detalhes -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-4">
             <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
                 <i data-lucide="box" class="w-4 h-4 text-primary"></i> Informações do Frete
@@ -146,7 +157,6 @@
             </div>
         </div>
 
-        <!-- Observações -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-2">
             <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
                 <i data-lucide="align-left" class="w-4 h-4 text-primary"></i> Observações
@@ -154,14 +164,12 @@
             <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
         </div>
 
-        <!-- Botão Próximo Cliente -->
         <button onclick="goToNextClient()" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
             Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
 
     </main>
 
-    <!-- Dialog de Pagamento -->
     <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-[110]">
         <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100 relative">
             <div class="bg-primary text-white p-6 text-center relative">
@@ -169,7 +177,8 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por 24 horas</p>
+                <!-- TEXTO ESTÁTICO, CONFORME SOLICITADO -->
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
             </div>
             
             <div class="p-8 flex flex-col items-center gap-5 text-center">
@@ -211,26 +220,22 @@
         </div>
     </div>
 
-    <!-- Scripts da Lógica -->
     <script>
         lucide.createIcons();
 
-        // COLOQUE SUA URL DO CLOUDFLARE AQUI
         const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
         
         let paymentInterval;
         let countdownInterval;
         let pixExpireInterval;
         let activeProviderId = null;
+        let realWhatsappNumber = "";
 
-        function generateShortId() {
-            const letters = 'abcdefghijklmnopqrstuvwxyz';
-            const numbers = '0123456789';
-            let l1 = letters[Math.floor(Math.random() * letters.length)];
-            let l2 = letters[Math.floor(Math.random() * letters.length)];
-            let n1 = numbers[Math.floor(Math.random() * numbers.length)];
-            let n2 = numbers[Math.floor(Math.random() * numbers.length)];
-            return `${l1}${l2}${n1}${n2}`;
+        function generateId18() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let res = '';
+            for(let i=0; i<18; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            return res;
         }
 
         function getParams() {
@@ -250,10 +255,10 @@
 
             if (localId) {
                 activeProviderId = localId;
-            } else if (urlId) {
+            } else if (urlId && urlId.length >= 18) {
                 activeProviderId = urlId;
             } else {
-                activeProviderId = generateShortId();
+                activeProviderId = generateId18();
             }
 
             if (clientId) {
@@ -325,41 +330,50 @@
             }, 1000);
         }
 
+        function resetActionButtons() {
+            document.getElementById('btnMostrar').classList.add('hidden');
+            document.getElementById('btnPagar').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            
+            const btnAgendado = document.getElementById('btnAgendado');
+            btnAgendado.classList.add('hidden');
+            btnAgendado.disabled = true;
+            btnAgendado.classList.remove('bg-green-500', 'text-white', 'border-green-600', 'hover:bg-green-600');
+            btnAgendado.classList.add('bg-slate-200', 'text-slate-400', 'border-slate-300');
+            btnAgendado.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+        }
+
         async function loadClientData() {
             const params = getParams();
-            if (!params.c) {
-                redirectTo404();
-                return;
-            }
+            if (!params.c) { redirectTo404(); return; }
 
             initializeProviderId();
             const clientId = params.c;
+            resetActionButtons();
 
             try {
-                const response = await fetch(`${WORKER_URL}/api/client/${clientId}`, {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/api/client/${clientId}`, {
                     headers: { 'x-provider-id': activeProviderId }
                 });
                 const data = await response.json();
 
                 if (data.error) {
-                    if (data.error === 'CLIENT_NOT_FOUND') {
-                        redirectTo404();
-                        return;
-                    }
-                    alert("Aviso do Servidor: " + data.error);
-                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha no Backend:<br>${data.error}</p>`;
+                    if (data.error === 'CLIENT_NOT_FOUND') { redirectTo404(); return; }
+                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha:<br>${data.error}</p>`;
                     return;
                 }
 
                 if(data.config) {
                     const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
                     document.getElementById('precoDisplay').innerText = valorFormatado;
+                    document.getElementById('popupText').innerText = data.config.horaLimite + " horas";
                 }
 
                 if (!data.access.active) {
                     if (localStorage.getItem('provider_id')) {
                         localStorage.removeItem('provider_id');
-                        activeProviderId = generateShortId();
+                        activeProviderId = generateId18();
                         const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
                         window.history.replaceState(null, '', newUrl);
                     }
@@ -373,37 +387,117 @@
                 document.getElementById('destino').innerText = data.client.destino || '-';
                 document.getElementById('area').innerText = data.client.areaAcessivel || '-';
                 document.getElementById('ajudante').innerText = data.client.ajudante || '-';
-                
                 document.getElementById('dataRetirada').innerText = formatDateOnly(data.client.dataRetirada);
-                
                 document.getElementById('pagamento').innerText = data.client.pagamento || '-';
                 document.getElementById('observacoes').innerText = data.client.observacoes || '-';
 
                 const phoneEl = document.getElementById('clientPhone');
-                const btnShow = document.getElementById('btnShowNumber');
                 const statusEl = document.getElementById('activeStatus');
+                const warningAgendado = document.getElementById('agendadoWarning');
+                const contactCard = document.getElementById('contactCard');
 
-                phoneEl.innerText = data.client.whatsapp;
+                phoneEl.innerText = data.client.whatsapp; 
 
-                if (data.access.active) {
-                    btnShow.classList.add('hidden');
-                    statusEl.classList.remove('hidden');
-                    
-                    startCountdown(data.access.inativacao); 
-                    
-                    const whatsNumber = data.client.whatsapp.replace(/\D/g, '');
-                    phoneEl.innerHTML = `<a href="https://wa.me/55${whatsNumber}" target="_blank" class="text-primary underline font-black">${data.client.whatsapp}</a>`;
-                } else {
-                    btnShow.classList.remove('hidden');
+                if (data.client.isAgendado) {
+                    warningAgendado.classList.remove('hidden');
+                    contactCard.classList.add('hidden');
                     statusEl.classList.add('hidden');
+                } else {
+                    warningAgendado.classList.add('hidden');
+                    contactCard.classList.remove('hidden');
+
+                    if (data.access.active) {
+                        statusEl.classList.remove('hidden');
+                        document.getElementById('btnMostrar').classList.remove('hidden');
+                        startCountdown(data.access.inativacao); 
+                        realWhatsappNumber = data.client.whatsapp.replace(/\D/g, ''); 
+                    } else {
+                        statusEl.classList.add('hidden');
+                        document.getElementById('btnPagar').classList.remove('hidden');
+                    }
                 }
 
                 document.getElementById('loadingView').classList.add('hidden');
                 document.getElementById('mainView').classList.remove('hidden');
                 document.getElementById('mainView').classList.add('flex');
+                lucide.createIcons();
 
             } catch (error) {
-                alert("Erro grave na conexão com o servidor: " + error.message);
+                alert("Erro grave na conexão com o servidor. Verifique a internet.");
+            }
+        }
+
+        async function revealNumber() {
+            const params = getParams();
+            const btnMostrar = document.getElementById('btnMostrar');
+            const phoneEl = document.getElementById('clientPhone');
+            const actionBtns = document.getElementById('actionButtons');
+            const btnAgendado = document.getElementById('btnAgendado');
+
+            btnMostrar.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
+            lucide.createIcons();
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                await fetch(`${baseUrl}/api/register-view/${params.c}`, { method: 'POST', headers: { 'x-provider-id': activeProviderId } });
+                
+                btnMostrar.classList.add('hidden');
+                actionBtns.classList.remove('hidden');
+                btnAgendado.classList.remove('hidden');
+                
+                phoneEl.innerText = realWhatsappNumber; 
+
+            } catch (e) {
+                alert("Erro ao revelar número.");
+                btnMostrar.innerText = 'Mostrar';
+            }
+        }
+
+        function enableAgendadoButton() {
+            const btn = document.getElementById('btnAgendado');
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-200', 'text-slate-400', 'border-slate-300');
+            btn.classList.add('bg-green-500', 'text-white', 'border-green-600', 'hover:bg-green-600', 'cursor-pointer');
+        }
+
+        function goToWhatsApp() {
+            enableAgendadoButton();
+            window.open(`https://wa.me/55${realWhatsappNumber}`, '_blank');
+        }
+
+        function goToCall() {
+            enableAgendadoButton();
+            window.open(`tel:+55${realWhatsappNumber}`, '_self');
+        }
+
+        async function markAsAgendado() {
+            const params = getParams();
+            const btn = document.getElementById('btnAgendado');
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Salvando...';
+            lucide.createIcons();
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const req = await fetch(`${baseUrl}/api/schedule-client/${params.c}`, { 
+                    method: 'POST', headers: { 'x-provider-id': activeProviderId } 
+                });
+                const res = await req.json();
+
+                if (res.success) {
+                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Registrado com Sucesso';
+                    btn.classList.replace('bg-green-500', 'bg-slate-900');
+                    btn.classList.replace('hover:bg-green-600', 'hover:bg-slate-800');
+                    btn.disabled = true;
+                    lucide.createIcons();
+                } else if (res.message) {
+                    alert(res.message);
+                    btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                alert("Erro ao salvar.");
+                btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+                lucide.createIcons();
             }
         }
 
@@ -422,34 +516,28 @@
             pixInput.value = '';
 
             try {
-                const response = await fetch(`${WORKER_URL}/api/pay`, {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/api/pay`, {
                     method: 'POST',
                     headers: { 'x-provider-id': activeProviderId }
                 });
                 const data = await response.json();
 
-                if(data.payload) {
-                    // GERADOR DE QR CODE REPARADO UTILIZANDO A NOVA BIBLIOTECA qrcode.js
-                    qrContainer.innerHTML = ''; // Limpa o spinner
+                if(data.payload && data.paymentId) {
+                    qrContainer.innerHTML = ''; 
                     new QRCode(qrContainer, {
-                        text: data.payload,
-                        width: 170, // Ajustado ao ecrã
-                        height: 170,
-                        colorDark : "#0f172a",
-                        colorLight : "#f8fafc",
-                        correctLevel : QRCode.CorrectLevel.M
+                        text: data.payload, width: 170, height: 170, colorDark : "#0f172a", colorLight : "#f8fafc"
                     });
                     
                     pixInput.value = data.payload;
-                    startPaymentVerification();
+                    startPaymentVerification(data.paymentId);
                     startPixExpirationTimer(); 
 
                 } else if(data.error) {
                     qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Servidor:<br>${data.error}</p></div>`;
                 }
-
             } catch (error) {
-                qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Falha de requisição: ${error.message}</p>`;
+                qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Falha de requisição: Verifique sua internet.</p>`;
             }
         }
 
@@ -462,7 +550,6 @@
         function copyPix() {
             const copyText = document.getElementById("pixCodeInput");
             if (!copyText.value) return;
-            
             copyText.select();
             copyText.setSelectionRange(0, 99999); 
             navigator.clipboard.writeText(copyText.value);
@@ -474,19 +561,20 @@
             setTimeout(() => { btn.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
         }
 
-        function startPaymentVerification() {
+        function startPaymentVerification(paymentId) {
             clearInterval(paymentInterval);
             paymentInterval = setInterval(async () => {
                 const params = getParams();
-                if(!params.c) return;
+                if(!params.c || !paymentId) return;
                 
                 try {
-                    const response = await fetch(`${WORKER_URL}/api/client/${params.c}`, {
+                    const baseUrl = WORKER_URL.replace(/\/$/, '');
+                    const response = await fetch(`${baseUrl}/api/check-payment/${paymentId}`, {
                         headers: { 'x-provider-id': activeProviderId }
                     });
                     const data = await response.json();
                     
-                    if (data.access && data.access.active) {
+                    if (data.active) {
                         clearInterval(paymentInterval);
                         clearInterval(pixExpireInterval);
                         localStorage.setItem('provider_id', activeProviderId);
@@ -508,7 +596,8 @@
             document.getElementById('loadingView').classList.remove('hidden');
 
             try {
-                const response = await fetch(`${WORKER_URL}/api/next/${params.c}`);
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/api/next/${params.c}`);
                 const data = await response.json();
 
                 if (data.nextId) {
@@ -520,6 +609,8 @@
                 }
             } catch (err) {
                 alert("Erro ao buscar próximo cliente.");
+                document.getElementById('loadingView').classList.add('hidden');
+                document.getElementById('mainView').classList.remove('hidden');
             }
         }
 
