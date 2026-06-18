@@ -1,178 +1,203 @@
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientou!</title>
+    <title>Detalhes do Frete - Clientou!</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#006A60',
-                        primaryContainer: '#74F8E5',
-                        onPrimaryContainer: '#00201C',
-                        surface: '#FAFDFB',
-                        surfaceContainer: '#ECEEEB',
-                        onSurface: '#191C1B',
-                    },
-                    fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        '4xl': '2rem',
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #ECEEEB; color: #191C1B; }
-        .card-m3 { background-color: #FAFDFB; border-radius: 1.5rem; transition: all 0.3s ease; }
-        .btn-m3 { border-radius: 100px; font-weight: 500; transition: background-color 0.2s, transform 0.1s; }
-        .btn-m3:active { transform: scale(0.98); }
-        .dialog-backdrop { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+        body { background-color: #f8fafc; color: #0f172a; font-family: 'Inter', sans-serif; }
+        .dialog-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
         .hidden { display: none !important; }
-        .spinner { border: 4px solid rgba(0, 106, 96, 0.2); border-left-color: #006A60; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        .spinner { border: 4px solid rgba(37, 99, 235, 0.2); border-left-color: #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-8 px-4">
+<body class="min-h-screen pb-12 pt-6 px-4">
 
     <!-- Loading Inicial -->
-    <div id="loadingView" class="flex flex-col items-center justify-center h-64 w-full max-w-md">
+    <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
         <div class="spinner mb-4"></div>
-        <p class="text-onSurface font-medium">A carregar detalhes...</p>
+        <p class="font-black text-blue-600 text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
     </div>
 
     <!-- Interface Principal -->
-    <main id="mainView" class="w-full max-w-md hidden flex-col gap-4">
+    <main id="mainView" class="max-w-md mx-auto hidden flex-col gap-5">
         
-        <header class="text-center mb-4">
-            <h1 class="text-3xl font-bold text-primary mb-1">Clientou!</h1>
-            <p class="text-sm text-gray-600">Detalhes do Serviço</p>
+        <header class="text-center mb-2">
+            <h1 class="text-2xl font-black text-blue-600 tracking-tighter">CLIENTOU!</h1>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Painel do Prestador</p>
         </header>
 
-        <!-- Cartão Principal de Contacto -->
-        <div class="card-m3 shadow-md p-6 flex flex-col gap-4">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-primaryContainer flex items-center justify-center text-onPrimaryContainer">
-                    <i data-lucide="user" class="w-6 h-6"></i>
+        <!-- Cartão de Contacto -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6">
+            <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm">
+                    <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
                 </div>
                 <div>
-                    <h2 id="clientName" class="text-xl font-semibold text-onSurface">Nome do Cliente</h2>
-                    <p class="text-sm text-gray-500">Cliente Registado</p>
+                    <h2 id="clientName" class="text-lg font-black text-slate-800 tracking-tight leading-tight">Carregando...</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Cliente</p>
                 </div>
             </div>
 
-            <div class="mt-2 p-4 rounded-2xl bg-surfaceContainer flex flex-col gap-3">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="phone" class="w-5 h-5 text-primary"></i>
-                        <span id="clientPhone" class="font-medium text-lg tracking-wide">A carregar...</span>
+                        <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
+                        <span id="clientPhone" class="font-bold text-lg tracking-wide text-slate-800">A carregar...</span>
                     </div>
-                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="btn-m3 bg-primary text-white px-4 py-2 text-sm shadow-sm hover:bg-opacity-90 hidden">
-                        Mostrar número
+                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
+                        Desbloquear
                     </button>
                 </div>
-                <!-- Alerta de Inativação (Se ativo) -->
-                <div id="activeStatus" class="hidden text-xs text-green-700 bg-green-100 p-2 rounded-lg flex items-center gap-1">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i>
-                    Acesso Premium ativo até <span id="inactiveTime" class="font-bold ml-1"></span>
+                
+                <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
+                    <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
+                    Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m</span>
                 </div>
             </div>
         </div>
 
-        <!-- Cartão de Detalhes do Frete -->
-        <div class="card-m3 shadow-sm p-6 flex flex-col gap-4">
-            <h3 class="font-semibold text-lg border-b pb-2">Informações do Frete</h3>
+        <!-- Cartão de Detalhes -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-4">
+            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
+                <i data-lucide="box" class="w-4 h-4 text-blue-600"></i> Informações do Frete
+            </h3>
             
-            <div class="grid grid-cols-1 gap-4 text-sm">
+            <div class="grid grid-cols-1 gap-5">
                 <div class="flex items-start gap-3">
-                    <i data-lucide="truck" class="w-5 h-5 text-gray-500 mt-0.5"></i>
-                    <div><p class="text-gray-500 text-xs">Tipo de Frete</p><p id="tipoFrete" class="font-medium">-</p></div>
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">O que é</p><p id="tipoFrete" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
                 
                 <div class="flex items-start gap-3">
-                    <i data-lucide="map-pin" class="w-5 h-5 text-gray-500 mt-0.5"></i>
-                    <div><p class="text-gray-500 text-xs">Origem</p><p id="origem" class="font-medium">-</p></div>
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Origem</p><p id="origem" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <i data-lucide="flag" class="w-5 h-5 text-gray-500 mt-0.5"></i>
-                    <div><p class="text-gray-500 text-xs">Destino</p><p id="destino" class="font-medium">-</p></div>
+                    <div class="mt-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="flag" class="w-3.5 h-3.5 text-blue-600"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Destino</p><p id="destino" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="flex items-start gap-2">
-                        <i data-lucide="navigation" class="w-4 h-4 text-gray-500 mt-1"></i>
-                        <div><p class="text-gray-500 text-xs">Área Acessível</p><p id="area" class="font-medium">-</p></div>
+                    <div class="flex items-start gap-3">
+                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="navigation" class="w-3.5 h-3.5 text-slate-500"></i>
+                        </div>
+                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Acesso</p><p id="area" class="font-semibold text-sm text-slate-700">-</p></div>
                     </div>
-                    <div class="flex items-start gap-2">
-                        <i data-lucide="users" class="w-4 h-4 text-gray-500 mt-1"></i>
-                        <div><p class="text-gray-500 text-xs">Ajudante</p><p id="ajudante" class="font-medium">-</p></div>
+                    <div class="flex items-start gap-3">
+                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
+                        </div>
+                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ajudante</p><p id="ajudante" class="font-semibold text-sm text-slate-700">-</p></div>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <i class="w-5 h-5 text-gray-500 mt-0.5" data-lucide="calendar"></i>
-                    <div><p class="text-gray-500 text-xs">Quando Retirar</p><p id="dataRetirada" class="font-medium">-</p></div>
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Retirada</p><p id="dataRetirada" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <i data-lucide="credit-card" class="w-5 h-5 text-gray-500 mt-0.5"></i>
-                    <div><p class="text-gray-500 text-xs">Pagamento</p><p id="pagamento" class="font-medium">-</p></div>
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="banknote" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pagamento</p><p id="pagamento" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
             </div>
         </div>
 
         <!-- Observações -->
-        <div class="card-m3 shadow-sm p-6 mb-8">
-            <h3 class="font-semibold text-lg mb-2 flex items-center gap-2">
-                <i data-lucide="align-left" class="w-5 h-5"></i> Observações
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-2">
+            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+                <i data-lucide="align-left" class="w-4 h-4 text-blue-600"></i> Observações
             </h3>
-            <p id="observacoes" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl italic">-</p>
+            <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
         </div>
+
+        <!-- Botão Próximo Cliente -->
+        <button onclick="goToNextClient()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-slate-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+            Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
 
     </main>
 
-    <!-- Dialog de Pagamento (Popup) -->
-    <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-surface rounded-4xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all">
-            <div class="bg-primary text-white p-6 text-center relative">
-                <button onclick="closePaymentDialog()" class="absolute top-4 right-4 text-white hover:text-gray-200">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+    <!-- Dialog de Pagamento -->
+    <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-[110]">
+        <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+            <div class="bg-blue-600 text-white p-6 text-center relative">
+                <button onclick="closePaymentDialog()" class="absolute top-5 right-5 text-blue-200 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
-                <h2 class="text-xl font-bold mb-2">Desbloquear Contacto</h2>
-                <p class="text-sm opacity-90">Veja todos os WhatsApp dos clientes até as <span class="font-bold text-yellow-300">00:00</span></p>
+                <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
+                <p class="text-xs font-medium text-blue-100 leading-tight">Desbloqueie todos os WhatsApp dos clientes até as <span id="horaLimiteDisplay" class="font-bold text-yellow-300">00:00</span></p>
             </div>
             
-            <div class="p-6 flex flex-col items-center gap-4 text-center">
-                <div class="bg-primaryContainer text-onPrimaryContainer font-bold text-2xl py-2 px-6 rounded-full inline-block">
-                    R$ 5,00 <span class="text-sm font-normal">/ diária</span>
+            <div class="p-8 flex flex-col items-center gap-5 text-center relative">
+                
+                <!-- Cronômetro de 15 Minutos -->
+                <div id="pixTimer" class="absolute -top-3 bg-red-500 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md tracking-wider hidden z-10">
+                    EXPIRA EM <span id="pixTimerText">15:00</span>
+                </div>
+
+                <!-- Preço Dinâmico inserido aqui -->
+                <div id="precoDisplay" class="bg-slate-50 text-slate-800 border border-slate-200 font-black text-3xl py-3 px-8 rounded-2xl inline-block shadow-sm">
+                    R$ ...
                 </div>
                 
-                <p class="text-sm text-gray-600">Efetue o pagamento via PIX utilizando o QR Code abaixo ou o código Copia e Cola.</p>
+                <p class="text-xs font-medium text-slate-500 leading-relaxed">Efetue o pagamento via PIX utilizando o QR Code abaixo ou Copia e Cola.</p>
 
-                <div id="qrCodeContainer" class="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                <!-- Status de Expirado Oculto -->
+                <div id="pixExpiredMsg" class="hidden flex-col items-center gap-3 w-full py-4">
+                    <div class="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800">O Código PIX expirou.</p>
+                    <button onclick="openPaymentDialog()" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest mt-2 hover:bg-slate-800 transition">Gerar Novo PIX</button>
+                </div>
+
+                <!-- QR Code Visível -->
+                <div id="qrCodeContainer" class="w-48 h-48 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-200 p-2">
                     <div class="spinner w-8 h-8"></div>
                 </div>
 
-                <div class="w-full">
-                    <label class="text-xs text-left w-full block mb-1 text-gray-500 font-medium">Pix Copia e Cola</label>
+                <!-- Copia e Cola Visível -->
+                <div id="pixInputBox" class="w-full">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-left w-full block mb-2 text-slate-400">Pix Copia e Cola</label>
                     <div class="flex gap-2">
-                        <input type="text" id="pixCodeInput" readonly class="w-full bg-surfaceContainer p-3 rounded-xl text-sm border-none focus:ring-0 outline-none truncate" placeholder="A gerar código...">
-                        <button onclick="copyPix()" class="btn-m3 bg-gray-800 text-white p-3 rounded-xl hover:bg-gray-700 flex-shrink-0">
+                        <input type="text" id="pixCodeInput" readonly class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl text-xs font-medium focus:ring-0 outline-none truncate text-slate-600" placeholder="A gerar código...">
+                        <button onclick="copyPix()" class="bg-slate-900 text-white p-4 rounded-2xl hover:bg-slate-800 flex-shrink-0 shadow-md transform active:scale-95 transition-all">
                             <i data-lucide="copy" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="text-xs text-primary font-medium flex items-center gap-1 mt-2 animate-pulse">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> A aguardar pagamento...
+                <div id="waitingMsg" class="text-[11px] font-bold uppercase tracking-widest text-blue-600 flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Aguardando Pagamento...
                 </div>
             </div>
         </div>
@@ -182,13 +207,14 @@
     <script>
         lucide.createIcons();
 
-        // COLOQUE_AQUI_A_URL_DO_SEU_CLOUDFLARE_WORKER (SEM barra no final)
+        // COLOQUE SUA URL DO CLOUDFLARE AQUI
         const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
         
         let paymentInterval;
+        let countdownInterval;
+        let pixExpirationInterval;
         let activeProviderId = null;
 
-        // 1. Gerar ID curto
         function generateShortId() {
             const letters = 'abcdefghijklmnopqrstuvwxyz';
             const numbers = '0123456789';
@@ -199,19 +225,21 @@
             return `${l1}${l2}${n1}${n2}`;
         }
 
-        // 2. Extrair ID do Cliente da URL usando o parâmetro "c"
-        function getClientId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('c');
+        function getParams() {
+            const params = new URLSearchParams(window.location.search);
+            return { c: params.get('c'), p: params.get('p') };
         }
 
-        // 3. Inicializar Prestador e Forçar a URL no Padrão ?c=ID&p=ID
-        function initializeProviderId(clientId) {
-            let localId = localStorage.getItem('provider_id');
-            const urlParams = new URLSearchParams(window.location.search);
-            let urlId = urlParams.get('p');
+        function redirectTo404() {
+            window.location.href = 'https://clientou.online/404';
+        }
 
-            // Prioridade: 1º Cache (já pago), 2º Link clicado, 3º Gerar novo
+        function initializeProviderId() {
+            let localId = localStorage.getItem('provider_id');
+            const params = getParams();
+            let urlId = params.p;
+            let clientId = params.c;
+
             if (localId) {
                 activeProviderId = localId;
             } else if (urlId) {
@@ -220,56 +248,114 @@
                 activeProviderId = generateShortId();
             }
 
-            // Garante que a URL fica bonita e com os IDs certos
-            const newUrl = window.location.pathname + '?c=' + clientId + '&p=' + activeProviderId;
-            window.history.replaceState(null, '', newUrl);
+            if (clientId) {
+                const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
+                window.history.replaceState(null, '', newUrl);
+            }
         }
 
-        // 4. Carregar Dados
-        async function loadClientData() {
-            const clientId = getClientId();
+        function startCountdown(inativacaoISO) {
+            clearInterval(countdownInterval);
+            const el = document.getElementById('countdownText');
+            const limitDate = new Date(inativacaoISO);
+            
+            function update() {
+                const now = new Date();
+                const diff = limitDate - now;
+                
+                if(diff <= 0) {
+                    el.innerText = "Expirado";
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                el.innerText = `${hours}h ${mins}m`;
+            }
+            
+            update();
+            countdownInterval = setInterval(update, 60000); 
+        }
 
-            // REDIRECIONAR SE NÃO HOUVER CLIENTE NA URL
-            if (!clientId) {
-                window.location.href = 'https://clientou.online/404';
+        // Lógica de Expiração Visual do PIX
+        function startPixExpiration() {
+            clearInterval(pixExpirationInterval);
+            let timeLeft = 15 * 60; // 15 minutos em segundos
+            
+            const timerEl = document.getElementById('pixTimer');
+            const timerText = document.getElementById('pixTimerText');
+            const qrBox = document.getElementById('qrCodeContainer');
+            const pixBox = document.getElementById('pixInputBox');
+            const expMsg = document.getElementById('pixExpiredMsg');
+            const waitMsg = document.getElementById('waitingMsg');
+
+            timerEl.classList.remove('hidden');
+            qrBox.classList.remove('hidden');
+            pixBox.classList.remove('hidden');
+            waitMsg.classList.remove('hidden');
+            expMsg.classList.add('hidden');
+            expMsg.classList.remove('flex');
+
+            pixExpirationInterval = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                timerText.innerText = `${m}:${s}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(pixExpirationInterval);
+                    clearInterval(paymentInterval); // Para de verificar o pagamento
+                    
+                    timerEl.classList.add('hidden');
+                    qrBox.classList.add('hidden');
+                    pixBox.classList.add('hidden');
+                    waitMsg.classList.add('hidden');
+                    
+                    expMsg.classList.remove('hidden');
+                    expMsg.classList.add('flex');
+                }
+            }, 1000);
+        }
+
+        async function loadClientData() {
+            const params = getParams();
+            if (!params.c) {
+                redirectTo404();
                 return;
             }
 
-            // Inicializa a formatação e as variáveis do prestador
-            initializeProviderId(clientId);
+            initializeProviderId();
+            const clientId = params.c;
 
             try {
-                // A requisição verifica a validade do prestador usando o cabeçalho
                 const response = await fetch(`${WORKER_URL}/api/client/${clientId}`, {
                     headers: { 'x-provider-id': activeProviderId }
                 });
                 const data = await response.json();
 
-                // REDIRECIONAR SE O BANCO DIZ QUE O CLIENTE NÃO EXISTE
-                if (response.status === 404 || (data.error && data.error === 'Cliente não encontrado')) {
-                    window.location.href = 'https://clientou.online/404';
-                    return;
-                }
-                
-                // Tratar outros erros
-                if (data.error) {
-                    alert("Erro do servidor: " + data.error);
+                if (data.error === 'CLIENT_NOT_FOUND') {
+                    redirectTo404();
                     return;
                 }
 
-                // Gerir Inativação do Prestador
+                if(data.config) {
+                    const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
+                    document.getElementById('precoDisplay').innerText = valorFormatado;
+                    document.getElementById('horaLimiteDisplay').innerText = data.config.horaLimite;
+                }
+
                 if (!data.access.active) {
                     if (localStorage.getItem('provider_id')) {
                         localStorage.removeItem('provider_id');
                         activeProviderId = generateShortId();
-                        const newUrl = window.location.pathname + '?c=' + clientId + '&p=' + activeProviderId;
+                        const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
                         window.history.replaceState(null, '', newUrl);
                     }
                 } else {
                     localStorage.setItem('provider_id', activeProviderId);
                 }
 
-                // Preenche os campos
                 document.getElementById('clientName').innerText = data.client.nome || '-';
                 document.getElementById('tipoFrete').innerText = data.client.tipoFrete || '-';
                 document.getElementById('origem').innerText = data.client.origem || '-';
@@ -290,10 +376,10 @@
                     btnShow.classList.add('hidden');
                     statusEl.classList.remove('hidden');
                     
-                    const timeOnly = new Date(data.access.inativacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                    document.getElementById('inactiveTime').innerText = timeOnly;
+                    startCountdown(data.access.inativacao); 
                     
-                    phoneEl.innerHTML = `<a href="https://wa.me/55${data.client.whatsapp.replace(/\D/g, '')}" target="_blank" class="text-primary underline">${data.client.whatsapp}</a>`;
+                    const whatsNumber = data.client.whatsapp.replace(/\D/g, '');
+                    phoneEl.innerHTML = `<a href="https://wa.me/55${whatsNumber}" target="_blank" class="text-blue-600 underline">${data.client.whatsapp}</a>`;
                 } else {
                     btnShow.classList.remove('hidden');
                     statusEl.classList.add('hidden');
@@ -304,12 +390,10 @@
                 document.getElementById('mainView').classList.add('flex');
 
             } catch (error) {
-                console.error("Erro ao carregar:", error);
-                document.getElementById('loadingView').innerHTML = `<p class="text-red-500 text-center font-bold">Erro de conexão. Verifique sua internet.</p>`;
+                alert("Erro ao carregar os dados.");
             }
         }
 
-        // 5. Abrir Modal de Pagamento e Gerar PIX
         async function openPaymentDialog() {
             const dialog = document.getElementById('paymentDialog');
             dialog.classList.remove('hidden');
@@ -317,6 +401,14 @@
             const qrContainer = document.getElementById('qrCodeContainer');
             const pixInput = document.getElementById('pixCodeInput');
             
+            // Restaura visual padrão caso tenha expirado antes
+            document.getElementById('pixTimer').classList.add('hidden');
+            document.getElementById('pixExpiredMsg').classList.add('hidden');
+            document.getElementById('pixExpiredMsg').classList.remove('flex');
+            qrContainer.classList.remove('hidden');
+            document.getElementById('pixInputBox').classList.remove('hidden');
+            document.getElementById('waitingMsg').classList.remove('hidden');
+
             qrContainer.innerHTML = '<div class="spinner w-8 h-8"></div>';
             pixInput.value = '';
 
@@ -327,23 +419,34 @@
                 });
                 const data = await response.json();
 
-                if(data.encodedImage) {
-                    qrContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.encodedImage}" class="w-full h-full object-contain p-2" alt="QR Code Pix">`;
+                if(data.payload) {
+                    qrContainer.innerHTML = '<canvas id="canvasQr" class="w-full h-full rounded-xl"></canvas>';
+                    QRCode.toCanvas(document.getElementById('canvasQr'), data.payload, { 
+                        width: 180, 
+                        margin: 1,
+                        color: { dark: '#0f172a', light: '#f8fafc' } 
+                    }, function (error) {
+                        if (error) console.error(error);
+                    });
+                    
                     pixInput.value = data.payload;
-                    startPaymentVerification();
-                } else {
-                    qrContainer.innerHTML = '<p class="text-xs text-red-500">Erro ao gerar PIX.</p>';
+                    startPixExpiration(); // Inicia o tempo de 15 minutos
+                    startPaymentVerification(); // Fica escutando se pagou
+
+                } else if(data.error) {
+                    document.getElementById('pixTimer').classList.add('hidden');
+                    qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro Asaas:<br>${data.error}</p>`;
                 }
 
             } catch (error) {
-                console.error(error);
-                qrContainer.innerHTML = '<p class="text-xs text-red-500">Erro de conexão.</p>';
+                qrContainer.innerHTML = '<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro de conexão.</p>';
             }
         }
 
         function closePaymentDialog() {
             document.getElementById('paymentDialog').classList.add('hidden');
             clearInterval(paymentInterval);
+            clearInterval(pixExpirationInterval);
         }
 
         function copyPix() {
@@ -361,25 +464,23 @@
             setTimeout(() => { btn.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
         }
 
-        // 6. Verificar pagamento (Polling)
         function startPaymentVerification() {
             clearInterval(paymentInterval);
             paymentInterval = setInterval(async () => {
-                const clientId = getClientId();
+                const params = getParams();
+                if(!params.c) return;
                 
                 try {
-                    const response = await fetch(`${WORKER_URL}/api/client/${clientId}`, {
+                    const response = await fetch(`${WORKER_URL}/api/client/${params.c}`, {
                         headers: { 'x-provider-id': activeProviderId }
                     });
                     const data = await response.json();
                     
                     if (data.access && data.access.active) {
                         clearInterval(paymentInterval);
-                        
+                        clearInterval(pixExpirationInterval); // Para o contador
                         localStorage.setItem('provider_id', activeProviderId);
-
                         closePaymentDialog();
-                        alert("Pagamento confirmado! Acesso liberado até as 00:00.");
                         
                         document.getElementById('loadingView').classList.remove('hidden');
                         document.getElementById('mainView').classList.add('hidden');
@@ -387,6 +488,29 @@
                     }
                 } catch(e) {}
             }, 5000);
+        }
+
+        async function goToNextClient() {
+            const params = getParams();
+            if (!params.c) return;
+
+            document.getElementById('mainView').classList.add('hidden');
+            document.getElementById('loadingView').classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${WORKER_URL}/api/next/${params.c}`);
+                const data = await response.json();
+
+                if (data.nextId) {
+                    window.location.href = `${window.location.pathname}?c=${data.nextId}&p=${activeProviderId}`;
+                } else {
+                    alert("Você já viu todos os clientes disponíveis!");
+                    document.getElementById('loadingView').classList.add('hidden');
+                    document.getElementById('mainView').classList.remove('hidden');
+                }
+            } catch (err) {
+                alert("Erro ao buscar próximo cliente.");
+            }
         }
 
         window.onload = loadClientData;
