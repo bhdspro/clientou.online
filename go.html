@@ -2,7 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM
-  Adicionado Favicon SVG Dinâmico (Raio) 
+  Contador Dinâmico Pulsação, Favicon Raio e Ajustes de Textos
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -24,7 +24,7 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: '#1D4ED8', // Azul customizado Clientou
+                        primary: '#1D4ED8', 
                         primaryDark: '#1E3A8A'
                     }
                 }
@@ -52,7 +52,7 @@
         
         <header class="text-center mb-2">
             <h1 class="text-2xl font-black text-primary tracking-tighter">CLIENTOU!</h1>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Painel do Prestador</p>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
         </header>
 
         <!-- Cartão de Contacto -->
@@ -152,7 +152,7 @@
             <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
         </div>
 
-        <!-- Botão Próximo Cliente (Com a cor primária #1D4ED8 ajustada no CSS) -->
+        <!-- Botão Próximo Cliente -->
         <button onclick="goToNextClient()" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
             Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
@@ -167,7 +167,8 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado a todos os números de WhatsApp até as <span id="horaLimiteDisplay" class="font-bold text-yellow-300 animate-pulse inline-block">--:--</span></p>
+                <!-- TEXTO AJUSTADO E PULSAÇÃO APENAS NA HORA -->
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp até <span id="popupCountdown" class="font-bold text-yellow-300 animate-pulse inline-block">--h --m restantes</span></p>
             </div>
             
             <div class="p-8 flex flex-col items-center gap-5 text-center">
@@ -221,6 +222,7 @@
         
         let paymentInterval;
         let countdownInterval;
+        let popupCountdownInterval;
         let pixExpireInterval;
         let activeProviderId = null;
 
@@ -263,6 +265,18 @@
             }
         }
 
+        // LIMPEZA DE DATA (Tira os Zeros e o Formato ISO)
+        function formatDateOnly(dateString) {
+            if(!dateString) return '-';
+            try {
+                const d = new Date(dateString);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('pt-BR');
+                }
+            } catch(e){}
+            return dateString.split(' ')[0].split('T')[0];
+        }
+
         function startCountdown(inativacaoISO) {
             clearInterval(countdownInterval);
             const el = document.getElementById('countdownText');
@@ -287,24 +301,39 @@
             countdownInterval = setInterval(update, 60000); 
         }
 
-        // NOVO: Função para formatar a data que vem do banco
-        function formatDateOnly(dateString) {
-            if(!dateString) return '-';
-            // Se for string "suja" do Google, tenta extrair a data real
-            try {
-                const d = new Date(dateString);
-                if (!isNaN(d.getTime())) {
-                    return d.toLocaleDateString('pt-BR');
+        // CONTADOR DO POPUP (Calcula quanto tempo ele terá se pagar agora)
+        function startPopupCountdown(horaLimiteStr) {
+            clearInterval(popupCountdownInterval);
+            const el = document.getElementById('popupCountdown');
+            
+            function update() {
+                const now = new Date();
+                const timeParts = horaLimiteStr.split(':');
+                const hours = parseInt(timeParts[0]) || 23;
+                const mins = parseInt(timeParts[1]) || 59;
+                
+                const limitDate = new Date();
+                limitDate.setHours(hours, mins, 59, 999);
+                
+                // Se a hora de hoje já passou, ele ganha acesso até amanhã nessa mesma hora
+                if (limitDate <= now) {
+                    limitDate.setDate(limitDate.getDate() + 1);
                 }
-            } catch(e){}
-            // Fallback se for string simples
-            return dateString.split(' ')[0].split('T')[0];
+                
+                const diff = limitDate - now;
+                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                
+                el.innerText = `${h}h ${m}m restantes`;
+            }
+            
+            update();
+            popupCountdownInterval = setInterval(update, 60000);
         }
 
-        // NOVO: Contador de Expiração do PIX (15 Minutos)
         function startPixExpirationTimer() {
             clearInterval(pixExpireInterval);
-            let timeLeft = 15 * 60; // 15 minutos em segundos
+            let timeLeft = 15 * 60; 
             const timerEl = document.getElementById('pixTimer');
             timerEl.classList.remove('hidden');
             document.getElementById('qrExpiredOverlay').classList.add('hidden');
@@ -350,9 +379,9 @@
                 if(data.config) {
                     const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
                     document.getElementById('precoDisplay').innerText = valorFormatado;
-                    // Remove segundos caso existam no hora limite
-                    const hLimite = data.config.horaLimite.split(':');
-                    document.getElementById('horaLimiteDisplay').innerText = `${hLimite[0]}:${hLimite[1]}`;
+                    
+                    // Iniciar o contador do popup regresso (mesmo sem ele ter pago ainda)
+                    startPopupCountdown(data.config.horaLimite);
                 }
 
                 if (!data.access.active) {
@@ -373,7 +402,6 @@
                 document.getElementById('area').innerText = data.client.areaAcessivel || '-';
                 document.getElementById('ajudante').innerText = data.client.ajudante || '-';
                 
-                // Formata a data para exibir apenas DD/MM/AAAA
                 document.getElementById('dataRetirada').innerText = formatDateOnly(data.client.dataRetirada);
                 
                 document.getElementById('pagamento').innerText = data.client.pagamento || '-';
@@ -440,10 +468,11 @@
                     
                     pixInput.value = data.payload;
                     startPaymentVerification();
-                    startPixExpirationTimer(); // Inicia os 15 min
+                    startPixExpirationTimer(); 
 
                 } else if(data.error) {
-                    qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro:<br>${data.error}</p>`;
+                    // MOSTRA O ERRO EXATO QUE O ASAAS DEVOLVEU
+                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Asaas:<br>${data.error}</p></div>`;
                 }
 
             } catch (error) {
