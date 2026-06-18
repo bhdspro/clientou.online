@@ -2,7 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM
-  Alertas Expostos (Agora ele vai te "fofocar" se algo der erro)
+  Resolvido Erro da Biblioteca de QR Code com CDNJS
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -10,12 +10,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços Especializados - Clientou!</title>
+    <!-- FAVICON SVG RAIO -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- Biblioteca Segura para Gerar QR Code no Navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -40,7 +43,7 @@
 </head>
 <body class="min-h-screen pb-12 pt-6 px-4">
 
-    <!-- Loading Inicial -->
+    <!-- Ecrã de Loading Inicial -->
     <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
         <div class="spinner mb-4"></div>
         <p class="font-black text-primary text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
@@ -61,7 +64,7 @@
                     <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
                 </div>
                 <div>
-                    <h2 id="clientName" class="text-lg font-black text-slate-800 tracking-tight leading-tight">Carregando...</h2>
+                    <h2 id="clientName" class="text-lg font-black text-slate-800 tracking-tight leading-tight">A carregar...</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Cliente</p>
                 </div>
             </div>
@@ -166,7 +169,6 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <!-- TEXTO ALTERADO COMO SOLICITADO E REMOVIDO O CONTADOR DAQUI -->
                 <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por 24 horas</p>
             </div>
             
@@ -203,7 +205,7 @@
                 </div>
 
                 <div class="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Aguardando Pagamento...
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> A aguardar Pagamento...
                 </div>
             </div>
         </div>
@@ -339,7 +341,6 @@
                 });
                 const data = await response.json();
 
-                // 🚨 SE HOUVER UM ERRO DO SERVIDOR, ELE VAI AVISAR NA TELA
                 if (data.error) {
                     if (data.error === 'CLIENT_NOT_FOUND') {
                         redirectTo404();
@@ -402,7 +403,6 @@
                 document.getElementById('mainView').classList.add('flex');
 
             } catch (error) {
-                // Se der erro de CORS ou servidor fora do ar
                 alert("Erro grave na conexão com o servidor: " + error.message);
             }
         }
@@ -429,13 +429,15 @@
                 const data = await response.json();
 
                 if(data.payload) {
-                    qrContainer.innerHTML = '<canvas id="canvasQr" class="w-full h-full rounded-xl"></canvas>';
-                    QRCode.toCanvas(document.getElementById('canvasQr'), data.payload, { 
-                        width: 180, 
-                        margin: 1,
-                        color: { dark: '#0f172a', light: '#f8fafc' } 
-                    }, function (error) {
-                        if (error) console.error(error);
+                    // GERADOR DE QR CODE REPARADO UTILIZANDO A NOVA BIBLIOTECA qrcode.js
+                    qrContainer.innerHTML = ''; // Limpa o spinner
+                    new QRCode(qrContainer, {
+                        text: data.payload,
+                        width: 170, // Ajustado ao ecrã
+                        height: 170,
+                        colorDark : "#0f172a",
+                        colorLight : "#f8fafc",
+                        correctLevel : QRCode.CorrectLevel.M
                     });
                     
                     pixInput.value = data.payload;
