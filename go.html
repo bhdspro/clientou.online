@@ -1,9 +1,18 @@
 <!DOCTYPE html>
+<!-- 
+  ============================================================================
+  CLIENTOU! - FRONTEND PREMIUM
+  Adicionado Favicon SVG Dinâmico (Raio) 
+  ============================================================================
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Frete - Clientou!</title>
+    <!-- FAVICON SVG RAIO COM FUNDO AMARELO -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,7 +22,11 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1D4ED8', // Azul customizado Clientou
+                        primaryDark: '#1E3A8A'
+                    }
                 }
             }
         }
@@ -22,7 +35,7 @@
         body { background-color: #f8fafc; color: #0f172a; font-family: 'Inter', sans-serif; }
         .dialog-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
         .hidden { display: none !important; }
-        .spinner { border: 4px solid rgba(37, 99, 235, 0.2); border-left-color: #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        .spinner { border: 4px solid rgba(29, 78, 216, 0.2); border-left-color: #1D4ED8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -31,21 +44,21 @@
     <!-- Loading Inicial -->
     <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
         <div class="spinner mb-4"></div>
-        <p class="font-black text-blue-600 text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
+        <p class="font-black text-primary text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
     </div>
 
     <!-- Interface Principal -->
     <main id="mainView" class="max-w-md mx-auto hidden flex-col gap-5">
         
         <header class="text-center mb-2">
-            <h1 class="text-2xl font-black text-blue-600 tracking-tighter">CLIENTOU!</h1>
+            <h1 class="text-2xl font-black text-primary tracking-tighter">CLIENTOU!</h1>
             <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Painel do Prestador</p>
         </header>
 
         <!-- Cartão de Contacto -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6">
             <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary border border-blue-100 shadow-sm">
                     <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
                 </div>
                 <div>
@@ -60,7 +73,7 @@
                         <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
                         <span id="clientPhone" class="font-bold text-lg tracking-wide text-slate-800">A carregar...</span>
                     </div>
-                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
+                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
                         Desbloquear
                     </button>
                 </div>
@@ -75,7 +88,7 @@
         <!-- Cartão de Detalhes -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-4">
             <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
-                <i data-lucide="box" class="w-4 h-4 text-blue-600"></i> Informações do Frete
+                <i data-lucide="box" class="w-4 h-4 text-primary"></i> Informações do Frete
             </h3>
             
             <div class="grid grid-cols-1 gap-5">
@@ -83,7 +96,7 @@
                     <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-500"></i>
                     </div>
-                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">O que é</p><p id="tipoFrete" class="font-semibold text-sm text-slate-700">-</p></div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tipo de Frete</p><p id="tipoFrete" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
                 
                 <div class="flex items-start gap-3">
@@ -95,7 +108,7 @@
 
                 <div class="flex items-start gap-3">
                     <div class="mt-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="flag" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <i data-lucide="flag" class="w-3.5 h-3.5 text-primary"></i>
                     </div>
                     <div><p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Destino</p><p id="destino" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
@@ -134,13 +147,13 @@
         <!-- Observações -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-2">
             <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
-                <i data-lucide="align-left" class="w-4 h-4 text-blue-600"></i> Observações
+                <i data-lucide="align-left" class="w-4 h-4 text-primary"></i> Observações
             </h3>
             <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
         </div>
 
-        <!-- Botão Próximo Cliente -->
-        <button onclick="goToNextClient()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-slate-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+        <!-- Botão Próximo Cliente (Com a cor primária #1D4ED8 ajustada no CSS) -->
+        <button onclick="goToNextClient()" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
             Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
 
@@ -148,46 +161,42 @@
 
     <!-- Dialog de Pagamento -->
     <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-[110]">
-        <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100">
-            <div class="bg-blue-600 text-white p-6 text-center relative">
+        <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100 relative">
+            <div class="bg-primary text-white p-6 text-center relative">
                 <button onclick="closePaymentDialog()" class="absolute top-5 right-5 text-blue-200 hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <p class="text-xs font-medium text-blue-100 leading-tight">Desbloqueie todos os WhatsApp dos clientes até as <span id="horaLimiteDisplay" class="font-bold text-yellow-300">00:00</span></p>
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado a todos os números de WhatsApp até as <span id="horaLimiteDisplay" class="font-bold text-yellow-300 animate-pulse inline-block">--:--</span></p>
             </div>
             
-            <div class="p-8 flex flex-col items-center gap-5 text-center relative">
-                
-                <!-- Cronômetro de 15 Minutos -->
-                <div id="pixTimer" class="absolute -top-3 bg-red-500 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md tracking-wider hidden z-10">
-                    EXPIRA EM <span id="pixTimerText">15:00</span>
-                </div>
-
-                <!-- Preço Dinâmico inserido aqui -->
+            <div class="p-8 flex flex-col items-center gap-5 text-center">
                 <div id="precoDisplay" class="bg-slate-50 text-slate-800 border border-slate-200 font-black text-3xl py-3 px-8 rounded-2xl inline-block shadow-sm">
                     R$ ...
                 </div>
                 
                 <p class="text-xs font-medium text-slate-500 leading-relaxed">Efetue o pagamento via PIX utilizando o QR Code abaixo ou Copia e Cola.</p>
 
-                <!-- Status de Expirado Oculto -->
-                <div id="pixExpiredMsg" class="hidden flex-col items-center gap-3 w-full py-4">
-                    <div class="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center">
-                        <i data-lucide="clock" class="w-6 h-6"></i>
+                <!-- Container do QR Code com temporizador de expiração -->
+                <div class="relative w-full flex justify-center">
+                    <div id="qrCodeContainer" class="w-48 h-48 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-200 p-2 transition-all">
+                        <div class="spinner w-8 h-8"></div>
                     </div>
-                    <p class="text-sm font-bold text-slate-800">O Código PIX expirou.</p>
-                    <button onclick="openPaymentDialog()" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest mt-2 hover:bg-slate-800 transition">Gerar Novo PIX</button>
+                    
+                    <!-- Overlay QR Code Expirado -->
+                    <div id="qrExpiredOverlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl hidden flex-col items-center justify-center z-10 p-4 border border-slate-100">
+                        <i data-lucide="alert-circle" class="w-8 h-8 text-red-500 mb-2"></i>
+                        <p class="text-xs font-bold text-slate-800 mb-3">O código expirou</p>
+                        <button onclick="openPaymentDialog()" class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transform active:scale-95">Gerar Novo PIX</button>
+                    </div>
                 </div>
 
-                <!-- QR Code Visível -->
-                <div id="qrCodeContainer" class="w-48 h-48 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-200 p-2">
-                    <div class="spinner w-8 h-8"></div>
-                </div>
-
-                <!-- Copia e Cola Visível -->
-                <div id="pixInputBox" class="w-full">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-left w-full block mb-2 text-slate-400">Pix Copia e Cola</label>
+                <div class="w-full">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pix Copia e Cola</label>
+                        <!-- Temporizador 15 minutos -->
+                        <span id="pixTimer" class="text-[10px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 hidden">Expira em 15:00</span>
+                    </div>
                     <div class="flex gap-2">
                         <input type="text" id="pixCodeInput" readonly class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl text-xs font-medium focus:ring-0 outline-none truncate text-slate-600" placeholder="A gerar código...">
                         <button onclick="copyPix()" class="bg-slate-900 text-white p-4 rounded-2xl hover:bg-slate-800 flex-shrink-0 shadow-md transform active:scale-95 transition-all">
@@ -196,7 +205,7 @@
                     </div>
                 </div>
 
-                <div id="waitingMsg" class="text-[11px] font-bold uppercase tracking-widest text-blue-600 flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
+                <div class="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
                     <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Aguardando Pagamento...
                 </div>
             </div>
@@ -212,7 +221,7 @@
         
         let paymentInterval;
         let countdownInterval;
-        let pixExpirationInterval;
+        let pixExpireInterval;
         let activeProviderId = null;
 
         function generateShortId() {
@@ -278,42 +287,41 @@
             countdownInterval = setInterval(update, 60000); 
         }
 
-        // Lógica de Expiração Visual do PIX
-        function startPixExpiration() {
-            clearInterval(pixExpirationInterval);
+        // NOVO: Função para formatar a data que vem do banco
+        function formatDateOnly(dateString) {
+            if(!dateString) return '-';
+            // Se for string "suja" do Google, tenta extrair a data real
+            try {
+                const d = new Date(dateString);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('pt-BR');
+                }
+            } catch(e){}
+            // Fallback se for string simples
+            return dateString.split(' ')[0].split('T')[0];
+        }
+
+        // NOVO: Contador de Expiração do PIX (15 Minutos)
+        function startPixExpirationTimer() {
+            clearInterval(pixExpireInterval);
             let timeLeft = 15 * 60; // 15 minutos em segundos
-            
             const timerEl = document.getElementById('pixTimer');
-            const timerText = document.getElementById('pixTimerText');
-            const qrBox = document.getElementById('qrCodeContainer');
-            const pixBox = document.getElementById('pixInputBox');
-            const expMsg = document.getElementById('pixExpiredMsg');
-            const waitMsg = document.getElementById('waitingMsg');
-
             timerEl.classList.remove('hidden');
-            qrBox.classList.remove('hidden');
-            pixBox.classList.remove('hidden');
-            waitMsg.classList.remove('hidden');
-            expMsg.classList.add('hidden');
-            expMsg.classList.remove('flex');
-
-            pixExpirationInterval = setInterval(() => {
+            document.getElementById('qrExpiredOverlay').classList.add('hidden');
+            
+            pixExpireInterval = setInterval(() => {
                 timeLeft--;
                 const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
                 const s = (timeLeft % 60).toString().padStart(2, '0');
-                timerText.innerText = `${m}:${s}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(pixExpirationInterval);
-                    clearInterval(paymentInterval); // Para de verificar o pagamento
-                    
-                    timerEl.classList.add('hidden');
-                    qrBox.classList.add('hidden');
-                    pixBox.classList.add('hidden');
-                    waitMsg.classList.add('hidden');
-                    
-                    expMsg.classList.remove('hidden');
-                    expMsg.classList.add('flex');
+                timerEl.innerText = `Expira em ${m}:${s}`;
+                
+                if(timeLeft <= 0) {
+                    clearInterval(pixExpireInterval);
+                    clearInterval(paymentInterval);
+                    timerEl.innerText = "Expirado";
+                    document.getElementById('qrExpiredOverlay').classList.remove('hidden');
+                    document.getElementById('qrExpiredOverlay').classList.add('flex');
+                    document.getElementById('pixCodeInput').value = "";
                 }
             }, 1000);
         }
@@ -342,7 +350,9 @@
                 if(data.config) {
                     const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
                     document.getElementById('precoDisplay').innerText = valorFormatado;
-                    document.getElementById('horaLimiteDisplay').innerText = data.config.horaLimite;
+                    // Remove segundos caso existam no hora limite
+                    const hLimite = data.config.horaLimite.split(':');
+                    document.getElementById('horaLimiteDisplay').innerText = `${hLimite[0]}:${hLimite[1]}`;
                 }
 
                 if (!data.access.active) {
@@ -362,7 +372,10 @@
                 document.getElementById('destino').innerText = data.client.destino || '-';
                 document.getElementById('area').innerText = data.client.areaAcessivel || '-';
                 document.getElementById('ajudante').innerText = data.client.ajudante || '-';
-                document.getElementById('dataRetirada').innerText = data.client.dataRetirada || '-';
+                
+                // Formata a data para exibir apenas DD/MM/AAAA
+                document.getElementById('dataRetirada').innerText = formatDateOnly(data.client.dataRetirada);
+                
                 document.getElementById('pagamento').innerText = data.client.pagamento || '-';
                 document.getElementById('observacoes').innerText = data.client.observacoes || '-';
 
@@ -379,7 +392,7 @@
                     startCountdown(data.access.inativacao); 
                     
                     const whatsNumber = data.client.whatsapp.replace(/\D/g, '');
-                    phoneEl.innerHTML = `<a href="https://wa.me/55${whatsNumber}" target="_blank" class="text-blue-600 underline">${data.client.whatsapp}</a>`;
+                    phoneEl.innerHTML = `<a href="https://wa.me/55${whatsNumber}" target="_blank" class="text-primary underline font-black">${data.client.whatsapp}</a>`;
                 } else {
                     btnShow.classList.remove('hidden');
                     statusEl.classList.add('hidden');
@@ -401,14 +414,10 @@
             const qrContainer = document.getElementById('qrCodeContainer');
             const pixInput = document.getElementById('pixCodeInput');
             
-            // Restaura visual padrão caso tenha expirado antes
+            document.getElementById('qrExpiredOverlay').classList.add('hidden');
+            document.getElementById('qrExpiredOverlay').classList.remove('flex');
             document.getElementById('pixTimer').classList.add('hidden');
-            document.getElementById('pixExpiredMsg').classList.add('hidden');
-            document.getElementById('pixExpiredMsg').classList.remove('flex');
-            qrContainer.classList.remove('hidden');
-            document.getElementById('pixInputBox').classList.remove('hidden');
-            document.getElementById('waitingMsg').classList.remove('hidden');
-
+            
             qrContainer.innerHTML = '<div class="spinner w-8 h-8"></div>';
             pixInput.value = '';
 
@@ -430,12 +439,11 @@
                     });
                     
                     pixInput.value = data.payload;
-                    startPixExpiration(); // Inicia o tempo de 15 minutos
-                    startPaymentVerification(); // Fica escutando se pagou
+                    startPaymentVerification();
+                    startPixExpirationTimer(); // Inicia os 15 min
 
                 } else if(data.error) {
-                    document.getElementById('pixTimer').classList.add('hidden');
-                    qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro Asaas:<br>${data.error}</p>`;
+                    qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro:<br>${data.error}</p>`;
                 }
 
             } catch (error) {
@@ -446,7 +454,7 @@
         function closePaymentDialog() {
             document.getElementById('paymentDialog').classList.add('hidden');
             clearInterval(paymentInterval);
-            clearInterval(pixExpirationInterval);
+            clearInterval(pixExpireInterval);
         }
 
         function copyPix() {
@@ -478,7 +486,7 @@
                     
                     if (data.access && data.access.active) {
                         clearInterval(paymentInterval);
-                        clearInterval(pixExpirationInterval); // Para o contador
+                        clearInterval(pixExpireInterval);
                         localStorage.setItem('provider_id', activeProviderId);
                         closePaymentDialog();
                         
