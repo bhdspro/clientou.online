@@ -2,224 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM
-  Contador Dinâmico Pulsação, Favicon Raio e Ajustes de Textos
-  ============================================================================
--->
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do Frete - Clientou!</title>
-    <!-- FAVICON SVG RAIO COM FUNDO AMARELO -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        primary: '#1D4ED8', 
-                        primaryDark: '#1E3A8A'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background-color: #f8fafc; color: #0f172a; font-family: 'Inter', sans-serif; }
-        .dialog-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
-        .hidden { display: none !important; }
-        .spinner { border: 4px solid rgba(29, 78, 216, 0.2); border-left-color: #1D4ED8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body class="min-h-screen pb-12 pt-6 px-4">
-
-    <!-- Loading Inicial -->
-    <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
-        <div class="spinner mb-4"></div>
-        <p class="font-black text-primary text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
-    </div>
-
-    <!-- Interface Principal -->
-    <main id="mainView" class="max-w-md mx-auto hidden flex-col gap-5">
-        
-        <header class="text-center mb-2">
-            <h1 class="text-2xl font-black text-primary tracking-tighter">CLIENTOU!</h1>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
-        </header>
-
-        <!-- Cartão de Contacto -->
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6">
-            <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary border border-blue-100 shadow-sm">
-                    <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-                </div>
-                <div>
-                    <h2 id="clientName" class="text-lg font-black text-slate-800 tracking-tight leading-tight">Carregando...</h2>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Cliente</p>
-                </div>
-            </div>
-
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
-                        <span id="clientPhone" class="font-bold text-lg tracking-wide text-slate-800">A carregar...</span>
-                    </div>
-                    <button id="btnShowNumber" onclick="openPaymentDialog()" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
-                        Desbloquear
-                    </button>
-                </div>
-                
-                <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
-                    <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
-                    Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cartão de Detalhes -->
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-4">
-            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
-                <i data-lucide="box" class="w-4 h-4 text-primary"></i> Informações do Frete
-            </h3>
-            
-            <div class="grid grid-cols-1 gap-5">
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-500"></i>
-                    </div>
-                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tipo de Frete</p><p id="tipoFrete" class="font-semibold text-sm text-slate-700">-</p></div>
-                </div>
-                
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-500"></i>
-                    </div>
-                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Origem</p><p id="origem" class="font-semibold text-sm text-slate-700">-</p></div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="flag" class="w-3.5 h-3.5 text-primary"></i>
-                    </div>
-                    <div><p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Destino</p><p id="destino" class="font-semibold text-sm text-slate-700">-</p></div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex items-start gap-3">
-                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="navigation" class="w-3.5 h-3.5 text-slate-500"></i>
-                        </div>
-                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Acesso</p><p id="area" class="font-semibold text-sm text-slate-700">-</p></div>
-                    </div>
-                    <div class="flex items-start gap-3">
-                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
-                        </div>
-                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ajudante</p><p id="ajudante" class="font-semibold text-sm text-slate-700">-</p></div>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
-                    </div>
-                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Retirada</p><p id="dataRetirada" class="font-semibold text-sm text-slate-700">-</p></div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="banknote" class="w-3.5 h-3.5 text-slate-500"></i>
-                    </div>
-                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pagamento</p><p id="pagamento" class="font-semibold text-sm text-slate-700">-</p></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Observações -->
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-2">
-            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
-                <i data-lucide="align-left" class="w-4 h-4 text-primary"></i> Observações
-            </h3>
-            <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
-        </div>
-
-        <!-- Botão Próximo Cliente -->
-        <button onclick="goToNextClient()" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
-            Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
-        </button>
-
-    </main>
-
-    <!-- Dialog de Pagamento -->
-    <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-[110]">
-        <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100 relative">
-            <div class="bg-primary text-white p-6 text-center relative">
-                <button onclick="closePaymentDialog()" class="absolute top-5 right-5 text-blue-200 hover:text-white transition-colors">
-                    <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
-                </button>
-                <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <!-- TEXTO AJUSTADO E PULSAÇÃO APENAS NA HORA -->
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp até <span id="popupCountdown" class="font-bold text-yellow-300 animate-pulse inline-block">--h --m restantes</span></p>
-            </div>
-            
-            <div class="p-8 flex flex-col items-center gap-5 text-center">
-                <div id="precoDisplay" class="bg-slate-50 text-slate-800 border border-slate-200 font-black text-3xl py-3 px-8 rounded-2xl inline-block shadow-sm">
-                    R$ ...
-                </div>
-                
-                <p class="text-xs font-medium text-slate-500 leading-relaxed">Efetue o pagamento via PIX utilizando o QR Code abaixo ou Copia e Cola.</p>
-
-                <!-- Container do QR Code com temporizador de expiração -->
-                <div class="relative w-full flex justify-center">
-                    <div id="qrCodeContainer" class="w-48 h-48 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-200 p-2 transition-all">
-                        <div class="spinner w-8 h-8"></div>
-                    </div>
-                    
-                    <!-- Overlay QR Code Expirado -->
-                    <div id="qrExpiredOverlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl hidden flex-col items-center justify-center z-10 p-4 border border-slate-100">
-                        <i data-lucide="alert-circle" class="w-8 h-8 text-red-500 mb-2"></i>
-                        <p class="text-xs font-bold text-slate-800 mb-3">O código expirou</p>
-                        <button onclick="openPaymentDialog()" class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transform active:scale-95">Gerar Novo PIX</button>
-                    </div>
-                </div>
-
-                <div class="w-full">
-                    <div class="flex justify-between items-end mb-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pix Copia e Cola</label>
-                        <!-- Temporizador 15 minutos -->
-                        <span id="pixTimer" class="text-[10px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 hidden">Expira em 15:00</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="text" id="pixCodeInput" readonly class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl text-xs font-medium focus:ring-0 outline-none truncate text-slate-600" placeholder="A gerar código...">
-                        <button onclick="copyPix()" class="bg-slate-900 text-white p-4 rounded-2xl hover:bg-slate-800 flex-shrink-0 shadow-md transform active:scale-95 transition-all">
-                            <i data-lucide="copy" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Aguardando Pagamento...
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts da Lógica -->
-    <script>
-        lucide.createIcons();<!DOCTYPE html>
-<!-- 
-  ============================================================================
-  CLIENTOU! - FRONTEND PREMIUM
-  Contadores rápidos 1s, Datas formatadas perfeitamente, Pulsação só na hora
+  Alertas Expostos (Agora ele vai te "fofocar" se algo der erro)
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -227,7 +10,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços Especializados - Clientou!</title>
-    <!-- FAVICON SVG RAIO COM FUNDO AMARELO -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -384,8 +166,8 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <!-- PULSAÇÃO ESTÁ APENAS NO SPAN DA HORA -->
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp até <span id="popupCountdown" class="font-bold text-yellow-300 animate-pulse inline-block">--h --m --s</span></p>
+                <!-- TEXTO ALTERADO COMO SOLICITADO E REMOVIDO O CONTADOR DAQUI -->
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por 24 horas</p>
             </div>
             
             <div class="p-8 flex flex-col items-center gap-5 text-center">
@@ -432,11 +214,10 @@
         lucide.createIcons();
 
         // COLOQUE SUA URL DO CLOUDFLARE AQUI
-        const WORKER_URL = 'COLOQUE_AQUI_A_URL_DO_SEU_CLOUDFLARE_WORKER'; 
+        const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
         
         let paymentInterval;
         let countdownInterval;
-        let popupCountdownInterval;
         let pixExpireInterval;
         let activeProviderId = null;
 
@@ -479,7 +260,6 @@
             }
         }
 
-        // FUNÇÃO DE LIMPAR DATA EXTREMAMENTE SEGURA (Extrai DD/MM/AAAA puro)
         function formatDateOnly(dateString) {
             if(!dateString) return '-';
             try {
@@ -494,7 +274,6 @@
             return dateString.split(' ')[0].split('T')[0];
         }
 
-        // Cronômetro principal de acesso ativo (TICK A CADA 1 SEGUNDO)
         function startCountdown(inativacaoISO) {
             clearInterval(countdownInterval);
             const el = document.getElementById('countdownText');
@@ -520,36 +299,6 @@
             countdownInterval = setInterval(update, 1000); 
         }
 
-        // Cronômetro do POPUP Asaas (TICK A CADA 1 SEGUNDO)
-        function startPopupCountdown(horaLimiteStr) {
-            clearInterval(popupCountdownInterval);
-            const el = document.getElementById('popupCountdown');
-            
-            function update() {
-                const now = new Date();
-                const timeParts = horaLimiteStr.split(':');
-                const hours = parseInt(timeParts[0]) || 23;
-                const mins = parseInt(timeParts[1]) || 59;
-                
-                const limitDate = new Date();
-                limitDate.setHours(hours, mins, 59, 999);
-                
-                if (limitDate <= now) {
-                    limitDate.setDate(limitDate.getDate() + 1);
-                }
-                
-                const diff = limitDate - now;
-                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-                
-                el.innerText = `${h}h ${m}m ${s}s`;
-            }
-            
-            update();
-            popupCountdownInterval = setInterval(update, 1000);
-        }
-
         function startPixExpirationTimer() {
             clearInterval(pixExpireInterval);
             let timeLeft = 15 * 60; 
@@ -590,353 +339,20 @@
                 });
                 const data = await response.json();
 
-                if (data.error === 'CLIENT_NOT_FOUND') {
-                    redirectTo404();
+                // 🚨 SE HOUVER UM ERRO DO SERVIDOR, ELE VAI AVISAR NA TELA
+                if (data.error) {
+                    if (data.error === 'CLIENT_NOT_FOUND') {
+                        redirectTo404();
+                        return;
+                    }
+                    alert("Aviso do Servidor: " + data.error);
+                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha no Backend:<br>${data.error}</p>`;
                     return;
                 }
 
                 if(data.config) {
                     const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
                     document.getElementById('precoDisplay').innerText = valorFormatado;
-                    startPopupCountdown(data.config.horaLimite);
-                }
-
-                if (!data.access.active) {
-                    if (localStorage.getItem('provider_id')) {
-                        localStorage.removeItem('provider_id');
-                        activeProviderId = generateShortId();
-                        const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
-                        window.history.replaceState(null, '', newUrl);
-                    }
-                } else {
-                    localStorage.setItem('provider_id', activeProviderId);
-                }
-
-                document.getElementById('clientName').innerText = data.client.nome || '-';
-                document.getElementById('tipoFrete').innerText = data.client.tipoFrete || '-';
-                document.getElementById('origem').innerText = data.client.origem || '-';
-                document.getElementById('destino').innerText = data.client.destino || '-';
-                document.getElementById('area').innerText = data.client.areaAcessivel || '-';
-                document.getElementById('ajudante').innerText = data.client.ajudante || '-';
-                
-                // Aplicando a função garantida de data
-                document.getElementById('dataRetirada').innerText = formatDateOnly(data.client.dataRetirada);
-                
-                document.getElementById('pagamento').innerText = data.client.pagamento || '-';
-                document.getElementById('observacoes').innerText = data.client.observacoes || '-';
-
-                const phoneEl = document.getElementById('clientPhone');
-                const btnShow = document.getElementById('btnShowNumber');
-                const statusEl = document.getElementById('activeStatus');
-
-                phoneEl.innerText = data.client.whatsapp;
-
-                if (data.access.active) {
-                    btnShow.classList.add('hidden');
-                    statusEl.classList.remove('hidden');
-                    
-                    startCountdown(data.access.inativacao); 
-                    
-                    const whatsNumber = data.client.whatsapp.replace(/\D/g, '');
-                    phoneEl.innerHTML = `<a href="https://wa.me/55${whatsNumber}" target="_blank" class="text-primary underline font-black">${data.client.whatsapp}</a>`;
-                } else {
-                    btnShow.classList.remove('hidden');
-                    statusEl.classList.add('hidden');
-                }
-
-                document.getElementById('loadingView').classList.add('hidden');
-                document.getElementById('mainView').classList.remove('hidden');
-                document.getElementById('mainView').classList.add('flex');
-
-            } catch (error) {
-                alert("Erro ao carregar os dados. Verifique a internet.");
-            }
-        }
-
-        async function openPaymentDialog() {
-            const dialog = document.getElementById('paymentDialog');
-            dialog.classList.remove('hidden');
-            
-            const qrContainer = document.getElementById('qrCodeContainer');
-            const pixInput = document.getElementById('pixCodeInput');
-            
-            document.getElementById('qrExpiredOverlay').classList.add('hidden');
-            document.getElementById('qrExpiredOverlay').classList.remove('flex');
-            document.getElementById('pixTimer').classList.add('hidden');
-            
-            qrContainer.innerHTML = '<div class="spinner w-8 h-8"></div>';
-            pixInput.value = '';
-
-            try {
-                const response = await fetch(`${WORKER_URL}/api/pay`, {
-                    method: 'POST',
-                    headers: { 'x-provider-id': activeProviderId }
-                });
-                const data = await response.json();
-
-                if(data.payload) {
-                    qrContainer.innerHTML = '<canvas id="canvasQr" class="w-full h-full rounded-xl"></canvas>';
-                    QRCode.toCanvas(document.getElementById('canvasQr'), data.payload, { 
-                        width: 180, 
-                        margin: 1,
-                        color: { dark: '#0f172a', light: '#f8fafc' } 
-                    }, function (error) {
-                        if (error) console.error(error);
-                    });
-                    
-                    pixInput.value = data.payload;
-                    startPaymentVerification();
-                    startPixExpirationTimer(); 
-
-                } else if(data.error) {
-                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Asaas:<br>${data.error}</p></div>`;
-                }
-
-            } catch (error) {
-                qrContainer.innerHTML = '<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro de conexão.</p>';
-            }
-        }
-
-        function closePaymentDialog() {
-            document.getElementById('paymentDialog').classList.add('hidden');
-            clearInterval(paymentInterval);
-            clearInterval(pixExpireInterval);
-        }
-
-        function copyPix() {
-            const copyText = document.getElementById("pixCodeInput");
-            if (!copyText.value) return;
-            
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); 
-            navigator.clipboard.writeText(copyText.value);
-            
-            const btn = event.currentTarget;
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-green-400"></i>';
-            lucide.createIcons();
-            setTimeout(() => { btn.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
-        }
-
-        function startPaymentVerification() {
-            clearInterval(paymentInterval);
-            paymentInterval = setInterval(async () => {
-                const params = getParams();
-                if(!params.c) return;
-                
-                try {
-                    const response = await fetch(`${WORKER_URL}/api/client/${params.c}`, {
-                        headers: { 'x-provider-id': activeProviderId }
-                    });
-                    const data = await response.json();
-                    
-                    if (data.access && data.access.active) {
-                        clearInterval(paymentInterval);
-                        clearInterval(pixExpireInterval);
-                        localStorage.setItem('provider_id', activeProviderId);
-                        closePaymentDialog();
-                        
-                        document.getElementById('loadingView').classList.remove('hidden');
-                        document.getElementById('mainView').classList.add('hidden');
-                        loadClientData();
-                    }
-                } catch(e) {}
-            }, 5000);
-        }
-
-        async function goToNextClient() {
-            const params = getParams();
-            if (!params.c) return;
-
-            document.getElementById('mainView').classList.add('hidden');
-            document.getElementById('loadingView').classList.remove('hidden');
-
-            try {
-                const response = await fetch(`${WORKER_URL}/api/next/${params.c}`);
-                const data = await response.json();
-
-                if (data.nextId) {
-                    window.location.href = `${window.location.pathname}?c=${data.nextId}&p=${activeProviderId}`;
-                } else {
-                    alert("Você já viu todos os clientes disponíveis!");
-                    document.getElementById('loadingView').classList.add('hidden');
-                    document.getElementById('mainView').classList.remove('hidden');
-                }
-            } catch (err) {
-                alert("Erro ao buscar próximo cliente.");
-            }
-        }
-
-        window.onload = loadClientData;
-    </script>
-</body>
-</html>
-
-        // COLOQUE SUA URL DO CLOUDFLARE AQUI
-        const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
-        
-        let paymentInterval;
-        let countdownInterval;
-        let popupCountdownInterval;
-        let pixExpireInterval;
-        let activeProviderId = null;
-
-        function generateShortId() {
-            const letters = 'abcdefghijklmnopqrstuvwxyz';
-            const numbers = '0123456789';
-            let l1 = letters[Math.floor(Math.random() * letters.length)];
-            let l2 = letters[Math.floor(Math.random() * letters.length)];
-            let n1 = numbers[Math.floor(Math.random() * numbers.length)];
-            let n2 = numbers[Math.floor(Math.random() * numbers.length)];
-            return `${l1}${l2}${n1}${n2}`;
-        }
-
-        function getParams() {
-            const params = new URLSearchParams(window.location.search);
-            return { c: params.get('c'), p: params.get('p') };
-        }
-
-        function redirectTo404() {
-            window.location.href = 'https://clientou.online/404';
-        }
-
-        function initializeProviderId() {
-            let localId = localStorage.getItem('provider_id');
-            const params = getParams();
-            let urlId = params.p;
-            let clientId = params.c;
-
-            if (localId) {
-                activeProviderId = localId;
-            } else if (urlId) {
-                activeProviderId = urlId;
-            } else {
-                activeProviderId = generateShortId();
-            }
-
-            if (clientId) {
-                const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
-                window.history.replaceState(null, '', newUrl);
-            }
-        }
-
-        // LIMPEZA DE DATA (Tira os Zeros e o Formato ISO)
-        function formatDateOnly(dateString) {
-            if(!dateString) return '-';
-            try {
-                const d = new Date(dateString);
-                if (!isNaN(d.getTime())) {
-                    return d.toLocaleDateString('pt-BR');
-                }
-            } catch(e){}
-            return dateString.split(' ')[0].split('T')[0];
-        }
-
-        function startCountdown(inativacaoISO) {
-            clearInterval(countdownInterval);
-            const el = document.getElementById('countdownText');
-            const limitDate = new Date(inativacaoISO);
-            
-            function update() {
-                const now = new Date();
-                const diff = limitDate - now;
-                
-                if(diff <= 0) {
-                    el.innerText = "Expirado";
-                    clearInterval(countdownInterval);
-                    return;
-                }
-                
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                el.innerText = `${hours}h ${mins}m`;
-            }
-            
-            update();
-            countdownInterval = setInterval(update, 60000); 
-        }
-
-        // CONTADOR DO POPUP (Calcula quanto tempo ele terá se pagar agora)
-        function startPopupCountdown(horaLimiteStr) {
-            clearInterval(popupCountdownInterval);
-            const el = document.getElementById('popupCountdown');
-            
-            function update() {
-                const now = new Date();
-                const timeParts = horaLimiteStr.split(':');
-                const hours = parseInt(timeParts[0]) || 23;
-                const mins = parseInt(timeParts[1]) || 59;
-                
-                const limitDate = new Date();
-                limitDate.setHours(hours, mins, 59, 999);
-                
-                // Se a hora de hoje já passou, ele ganha acesso até amanhã nessa mesma hora
-                if (limitDate <= now) {
-                    limitDate.setDate(limitDate.getDate() + 1);
-                }
-                
-                const diff = limitDate - now;
-                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                
-                el.innerText = `${h}h ${m}m restantes`;
-            }
-            
-            update();
-            popupCountdownInterval = setInterval(update, 60000);
-        }
-
-        function startPixExpirationTimer() {
-            clearInterval(pixExpireInterval);
-            let timeLeft = 15 * 60; 
-            const timerEl = document.getElementById('pixTimer');
-            timerEl.classList.remove('hidden');
-            document.getElementById('qrExpiredOverlay').classList.add('hidden');
-            
-            pixExpireInterval = setInterval(() => {
-                timeLeft--;
-                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                const s = (timeLeft % 60).toString().padStart(2, '0');
-                timerEl.innerText = `Expira em ${m}:${s}`;
-                
-                if(timeLeft <= 0) {
-                    clearInterval(pixExpireInterval);
-                    clearInterval(paymentInterval);
-                    timerEl.innerText = "Expirado";
-                    document.getElementById('qrExpiredOverlay').classList.remove('hidden');
-                    document.getElementById('qrExpiredOverlay').classList.add('flex');
-                    document.getElementById('pixCodeInput').value = "";
-                }
-            }, 1000);
-        }
-
-        async function loadClientData() {
-            const params = getParams();
-            if (!params.c) {
-                redirectTo404();
-                return;
-            }
-
-            initializeProviderId();
-            const clientId = params.c;
-
-            try {
-                const response = await fetch(`${WORKER_URL}/api/client/${clientId}`, {
-                    headers: { 'x-provider-id': activeProviderId }
-                });
-                const data = await response.json();
-
-                if (data.error === 'CLIENT_NOT_FOUND') {
-                    redirectTo404();
-                    return;
-                }
-
-                if(data.config) {
-                    const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
-                    document.getElementById('precoDisplay').innerText = valorFormatado;
-                    
-                    // Iniciar o contador do popup regresso (mesmo sem ele ter pago ainda)
-                    startPopupCountdown(data.config.horaLimite);
                 }
 
                 if (!data.access.active) {
@@ -986,7 +402,8 @@
                 document.getElementById('mainView').classList.add('flex');
 
             } catch (error) {
-                alert("Erro ao carregar os dados.");
+                // Se der erro de CORS ou servidor fora do ar
+                alert("Erro grave na conexão com o servidor: " + error.message);
             }
         }
 
@@ -1026,12 +443,11 @@
                     startPixExpirationTimer(); 
 
                 } else if(data.error) {
-                    // MOSTRA O ERRO EXATO QUE O ASAAS DEVOLVEU
-                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Asaas:<br>${data.error}</p></div>`;
+                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Servidor:<br>${data.error}</p></div>`;
                 }
 
             } catch (error) {
-                qrContainer.innerHTML = '<p class="text-[10px] text-red-500 font-bold p-2 text-center">Erro de conexão.</p>';
+                qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Falha de requisição: ${error.message}</p>`;
             }
         }
 
