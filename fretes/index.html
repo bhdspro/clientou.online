@@ -2,7 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM (PRESTADOR)
-  Correção da exibição prematura do número e proteção visual do Frontend
+  Cronômetro Removido e Trava do WhatsApp Rigorosamente Aplicada
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -233,7 +233,6 @@
         let pixExpireInterval;
         let activeProviderId = null;
         let realWhatsappNumber = "";
-        let displayWhatsappNumber = "";
 
         function generateId18() {
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -374,10 +373,12 @@
                 const warningAgendado = document.getElementById('agendadoWarning');
                 const contactCard = document.getElementById('contactCard');
 
+                let rawPhone = String(data.client.whatsapp);
+
                 if (data.client.isAgendado) {
                     warningAgendado.classList.remove('hidden');
                     contactCard.classList.add('hidden');
-                    phoneEl.innerText = data.client.whatsapp; // Já vem mascarado do backend se agendado
+                    phoneEl.innerText = rawPhone; 
                 } else {
                     warningAgendado.classList.add('hidden');
                     contactCard.classList.remove('hidden');
@@ -385,20 +386,20 @@
                     if (data.access.active) {
                         document.getElementById('btnMostrar').classList.remove('hidden');
                         
-                        // Guarda o número real e formata a máscara pro front-end ver
-                        displayWhatsappNumber = String(data.client.whatsapp);
-                        realWhatsappNumber = displayWhatsappNumber.replace(/\D/g, ''); 
+                        // Guarda o número real na memória secreta
+                        realWhatsappNumber = rawPhone.replace(/\D/g, ''); 
                         
-                        // Força a máscara visual até o botão Mostrar ser clicado
-                        if(displayWhatsappNumber.length >= 8) {
-                            phoneEl.innerText = displayWhatsappNumber.substring(0, displayWhatsappNumber.length - 4) + '-****';
+                        // FORÇA A MÁSCARA NA TELA PARA NÃO MOSTRAR ANTES DO CLIQUE!
+                        if (rawPhone.length >= 8 && !rawPhone.includes('*')) {
+                            const prefix = rawPhone.substring(0, rawPhone.length - 4);
+                            phoneEl.innerText = prefix + '-****';
                         } else {
-                            phoneEl.innerText = '***';
+                            phoneEl.innerText = rawPhone;
                         }
 
                     } else {
                         document.getElementById('btnPagar').classList.remove('hidden');
-                        phoneEl.innerText = data.client.whatsapp; // Já vem mascarado do backend
+                        phoneEl.innerText = rawPhone; // Já veio mascarado do backend
                     }
                 }
 
@@ -431,8 +432,8 @@
                 actionBtns.classList.remove('hidden');
                 btnAgendado.classList.remove('hidden');
                 
-                // Agora sim revela o número real (mantendo os parênteses e formatação original)
-                phoneEl.innerText = displayWhatsappNumber; 
+                // Só agora o número real é injetado na tela!
+                phoneEl.innerText = realWhatsappNumber; 
 
             } catch (e) {
                 alert("Erro ao revelar número. Verifique sua internet.");
