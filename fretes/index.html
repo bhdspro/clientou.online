@@ -2,7 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM (PRESTADOR)
-  Blindagem contra Dados Inteiros (Crash do replace) e Tratamento seguro de data
+  Correção da exibição prematura do número e proteção visual do Frontend
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços Especializados - Clientou!</title>
+    <!-- FAVICON SVG RAIO -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -93,11 +94,6 @@
                             <i data-lucide="phone-call" class="w-4 h-4"></i>
                         </button>
                     </div>
-                </div>
-                
-                <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
-                    <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
-                    Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m --s</span>
                 </div>
 
                 <button id="btnAgendado" onclick="markAsAgendado()" disabled class="hidden mt-3 w-full bg-slate-200 text-slate-400 font-bold text-xs py-3 rounded-xl border border-slate-300 uppercase tracking-wide transition-all flex justify-center items-center gap-2">
@@ -226,6 +222,7 @@
         </div>
     </div>
 
+    <!-- Scripts da Lógica -->
     <script>
         lucide.createIcons();
 
@@ -233,10 +230,10 @@
         const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
         
         let paymentInterval;
-        let countdownInterval;
         let pixExpireInterval;
         let activeProviderId = null;
         let realWhatsappNumber = "";
+        let displayWhatsappNumber = "";
 
         function generateId18() {
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -274,17 +271,10 @@
             }
         }
 
-        // LIMPEZA FORÇADA PARA O FORMATO DA DATA EXIBIDA NO SITE
         function formatDateOnly(dateString) {
             if(!dateString) return '-';
-            const str = String(dateString).trim();
             try {
-                // Tenta extrair a data que vem no formato BR "DD/MM/YYYY HH:MM:SS"
-                if (str.includes('/')) {
-                   const parts = str.split(' ')[0].split('/');
-                   if (parts.length === 3) return `${parts[0]}/${parts[1]}/${parts[2]}`;
-                }
-                const d = new Date(str);
+                const d = new Date(dateString);
                 if (!isNaN(d.getTime())) {
                     const dia = d.getDate().toString().padStart(2, '0');
                     const mes = (d.getMonth() + 1).toString().padStart(2, '0');
@@ -292,32 +282,7 @@
                     return `${dia}/${mes}/${ano}`;
                 }
             } catch(e){}
-            return str.split(' ')[0].split('T')[0];
-        }
-
-        function startCountdown(inativacaoISO) {
-            clearInterval(countdownInterval);
-            const el = document.getElementById('countdownText');
-            const limitDate = new Date(inativacaoISO);
-            
-            function update() {
-                const now = new Date();
-                const diff = limitDate - now;
-                
-                if(diff <= 0) {
-                    el.innerText = "Expirado";
-                    clearInterval(countdownInterval);
-                    return;
-                }
-                
-                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-                el.innerText = `${h}h ${m}m ${s}s`;
-            }
-            
-            update();
-            countdownInterval = setInterval(update, 1000); 
+            return dateString.split(' ')[0].split('T')[0];
         }
 
         function startPixExpirationTimer() {
@@ -406,29 +371,34 @@
                 document.getElementById('observacoes').innerText = data.client.observacoes || '-';
 
                 const phoneEl = document.getElementById('clientPhone');
-                const statusEl = document.getElementById('activeStatus');
                 const warningAgendado = document.getElementById('agendadoWarning');
                 const contactCard = document.getElementById('contactCard');
-
-                phoneEl.innerText = data.client.whatsapp; 
 
                 if (data.client.isAgendado) {
                     warningAgendado.classList.remove('hidden');
                     contactCard.classList.add('hidden');
-                    statusEl.classList.add('hidden');
+                    phoneEl.innerText = data.client.whatsapp; // Já vem mascarado do backend se agendado
                 } else {
                     warningAgendado.classList.add('hidden');
                     contactCard.classList.remove('hidden');
 
                     if (data.access.active) {
-                        statusEl.classList.remove('hidden');
                         document.getElementById('btnMostrar').classList.remove('hidden');
-                        startCountdown(data.access.inativacao); 
-                        // BLINDAGEM DO WHATSAPP (Evita erro fatal se a planilha enviar como Número em vez de Texto)
-                        realWhatsappNumber = String(data.client.whatsapp).replace(/\D/g, ''); 
+                        
+                        // Guarda o número real e formata a máscara pro front-end ver
+                        displayWhatsappNumber = String(data.client.whatsapp);
+                        realWhatsappNumber = displayWhatsappNumber.replace(/\D/g, ''); 
+                        
+                        // Força a máscara visual até o botão Mostrar ser clicado
+                        if(displayWhatsappNumber.length >= 8) {
+                            phoneEl.innerText = displayWhatsappNumber.substring(0, displayWhatsappNumber.length - 4) + '-****';
+                        } else {
+                            phoneEl.innerText = '***';
+                        }
+
                     } else {
-                        statusEl.classList.add('hidden');
                         document.getElementById('btnPagar').classList.remove('hidden');
+                        phoneEl.innerText = data.client.whatsapp; // Já vem mascarado do backend
                     }
                 }
 
@@ -438,7 +408,6 @@
                 lucide.createIcons();
 
             } catch (error) {
-                // Alerta elegante para evitar jargões
                 alert("Erro de conexão. Verifique sua internet.");
                 document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Verifique sua conexão e recarregue a página.</p>`;
             }
@@ -462,7 +431,8 @@
                 actionBtns.classList.remove('hidden');
                 btnAgendado.classList.remove('hidden');
                 
-                phoneEl.innerText = realWhatsappNumber; 
+                // Agora sim revela o número real (mantendo os parênteses e formatação original)
+                phoneEl.innerText = displayWhatsappNumber; 
 
             } catch (e) {
                 alert("Erro ao revelar número. Verifique sua internet.");
