@@ -1,9 +1,16 @@
 <!DOCTYPE html>
+<!-- 
+  ============================================================================
+  CLIENTOU! - FRONTEND PREMIUM (PRESTADOR)
+  Sem Cronômetro e com Máscara Segura no Primeiro Carregamento
+  ============================================================================
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prestadores - Clientou! Serviços Especializados</title>
+    <title>Serviços Especializados - Clientou!</title>
+    <!-- FAVICON SVG RAIO -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +53,7 @@
             <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
         </header>
 
+        <!-- CARTÃO AGENDADO (Aviso) -->
         <div id="agendadoWarning" class="hidden bg-yellow-50 border border-yellow-200 p-4 rounded-3xl text-center mb-2">
             <i data-lucide="alert-triangle" class="w-8 h-8 text-yellow-500 mx-auto mb-2"></i>
             <h3 class="font-black text-yellow-800 text-sm">SERVIÇO INDISPONÍVEL</h3>
@@ -88,10 +96,7 @@
                     </div>
                 </div>
                 
-                <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
-                    <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
-                    Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m --s</span>
-                </div>
+                <!-- REMOVIDO: O bloco <div id="activeStatus"> contendo o cronômetro foi apagado daqui -->
 
                 <button id="btnAgendado" onclick="markAsAgendado()" disabled class="hidden mt-3 w-full bg-slate-200 text-slate-400 font-bold text-xs py-3 rounded-xl border border-slate-300 uppercase tracking-wide transition-all flex justify-center items-center gap-2">
                     <i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado
@@ -177,8 +182,7 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <!-- TEXTO ESTÁTICO, CONFORME SOLICITADO -->
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado a todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
             </div>
             
             <div class="p-8 flex flex-col items-center gap-5 text-center">
@@ -220,16 +224,18 @@
         </div>
     </div>
 
+    <!-- Scripts da Lógica -->
     <script>
         lucide.createIcons();
 
+        // 🔴 CONFIGURAÇÃO: Coloque aqui a URL do seu Worker
         const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
         
         let paymentInterval;
-        let countdownInterval;
         let pixExpireInterval;
         let activeProviderId = null;
         let realWhatsappNumber = "";
+        let displayWhatsappNumber = "";
 
         function generateId18() {
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -281,31 +287,6 @@
             return dateString.split(' ')[0].split('T')[0];
         }
 
-        function startCountdown(inativacaoISO) {
-            clearInterval(countdownInterval);
-            const el = document.getElementById('countdownText');
-            const limitDate = new Date(inativacaoISO);
-            
-            function update() {
-                const now = new Date();
-                const diff = limitDate - now;
-                
-                if(diff <= 0) {
-                    el.innerText = "Expirado";
-                    clearInterval(countdownInterval);
-                    return;
-                }
-                
-                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-                el.innerText = `${h}h ${m}m ${s}s`;
-            }
-            
-            update();
-            countdownInterval = setInterval(update, 1000); 
-        }
-
         function startPixExpirationTimer() {
             clearInterval(pixExpireInterval);
             let timeLeft = 15 * 60; 
@@ -343,6 +324,15 @@
             btnAgendado.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
         }
 
+        // FUNÇÃO PARA MASCARAR O NÚMERO
+        function applyMask(numberStr) {
+            const str = String(numberStr).trim();
+            if(str.length >= 8) {
+                return str.substring(0, str.length - 4) + '-****';
+            }
+            return '***';
+        }
+
         async function loadClientData() {
             const params = getParams();
             if (!params.c) { redirectTo404(); return; }
@@ -360,7 +350,7 @@
 
                 if (data.error) {
                     if (data.error === 'CLIENT_NOT_FOUND') { redirectTo404(); return; }
-                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha:<br>${data.error}</p>`;
+                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha do Servidor:<br>${data.error}</p>`;
                     return;
                 }
 
@@ -392,28 +382,30 @@
                 document.getElementById('observacoes').innerText = data.client.observacoes || '-';
 
                 const phoneEl = document.getElementById('clientPhone');
-                const statusEl = document.getElementById('activeStatus');
                 const warningAgendado = document.getElementById('agendadoWarning');
                 const contactCard = document.getElementById('contactCard');
-
-                phoneEl.innerText = data.client.whatsapp; 
 
                 if (data.client.isAgendado) {
                     warningAgendado.classList.remove('hidden');
                     contactCard.classList.add('hidden');
-                    statusEl.classList.add('hidden');
+                    
+                    phoneEl.innerText = applyMask(data.client.whatsapp); 
                 } else {
                     warningAgendado.classList.add('hidden');
                     contactCard.classList.remove('hidden');
 
                     if (data.access.active) {
-                        statusEl.classList.remove('hidden');
                         document.getElementById('btnMostrar').classList.remove('hidden');
-                        startCountdown(data.access.inativacao); 
-                        realWhatsappNumber = data.client.whatsapp.replace(/\D/g, ''); 
+                        
+                        displayWhatsappNumber = String(data.client.whatsapp);
+                        realWhatsappNumber = displayWhatsappNumber.replace(/\D/g, ''); 
+                        
+                        // FORÇA A MÁSCARA NA TELA ENQUANTO NÃO CLICA NO MOSTRAR
+                        phoneEl.innerText = applyMask(data.client.whatsapp);
+
                     } else {
-                        statusEl.classList.add('hidden');
                         document.getElementById('btnPagar').classList.remove('hidden');
+                        phoneEl.innerText = applyMask(data.client.whatsapp); 
                     }
                 }
 
@@ -423,7 +415,8 @@
                 lucide.createIcons();
 
             } catch (error) {
-                alert("Erro grave na conexão com o servidor. Verifique a internet.");
+                alert("Erro de conexão. Verifique sua internet.");
+                document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Verifique sua conexão e recarregue a página.</p>`;
             }
         }
 
@@ -445,10 +438,10 @@
                 actionBtns.classList.remove('hidden');
                 btnAgendado.classList.remove('hidden');
                 
-                phoneEl.innerText = realWhatsappNumber; 
+                phoneEl.innerText = displayWhatsappNumber; 
 
             } catch (e) {
-                alert("Erro ao revelar número.");
+                alert("Erro ao revelar número. Verifique sua internet.");
                 btnMostrar.innerText = 'Mostrar';
             }
         }
@@ -495,7 +488,7 @@
                     lucide.createIcons();
                 }
             } catch (e) {
-                alert("Erro ao salvar.");
+                alert("Erro ao salvar. Verifique a conexão.");
                 btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
                 lucide.createIcons();
             }
@@ -534,7 +527,7 @@
                     startPixExpirationTimer(); 
 
                 } else if(data.error) {
-                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Erro do Servidor:<br>${data.error}</p></div>`;
+                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Falha:<br>${data.error}</p></div>`;
                 }
             } catch (error) {
                 qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Falha de requisição: Verifique sua internet.</p>`;
@@ -608,7 +601,7 @@
                     document.getElementById('mainView').classList.remove('hidden');
                 }
             } catch (err) {
-                alert("Erro ao buscar próximo cliente.");
+                alert("Erro ao buscar próximo cliente. Verifique sua internet.");
                 document.getElementById('loadingView').classList.add('hidden');
                 document.getElementById('mainView').classList.remove('hidden');
             }
