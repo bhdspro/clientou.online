@@ -1,50 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<!-- 
+  ============================================================================
+  CLIENTOU! - FRONTEND PREMIUM (PRESTADOR)
+  Blindagem contra Dados Inteiros (Crash do replace) e Tratamento seguro de data
+  ============================================================================
+-->
+<html lang="pt-BR">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17688764045"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-17688764045');
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fretes e Mudanças - Clientou! Serviços Especializados</title>
-    
-    <meta name="description" content="Precisando de frete, mudança ou carreto? O Clientou! Serviços Especializados conecta você aos melhores profissionais. Rápido, seguro e preço justo.">
-    <meta name="keywords" content="frete, carreto, transporte, mudança, frete barato, utilitário para frete, transportadora, carreto rápido, mudanças residenciais">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://clientou.online/fretes/">
-    
-    <meta property="og:title" content="Clientou! Fretes e Mudanças">
-    <meta property="og:description" content="Solicite um frete ou mudança em apenas 1 clique com os melhores profissionais.">
-    <meta property="og:url" content="https://clientou.online/fretes/">
-    <meta property="og:type" content="website">
-    
+    <title>Serviços Especializados - Clientou!</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FBBF24'/><path d='M58 20L32 60h16l-6 24 28-38H52l8-26z' fill='%231E3A8A'/></svg>">
     
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "name": "Clientou! Serviços Especializados",
-      "serviceType": "Fretes e Mudanças",
-      "provider": {
-        "@type": "LocalBusiness",
-        "name": "Clientou! Serviços Especializados",
-        "telephone": "+5543991228540",
-        "priceRange": "$$"
-      },
-      "areaServed": "BR",
-      "description": "Serviço de frete, mudança e carreto rápido."
-    }
-    </script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -58,442 +30,608 @@
             }
         }
     </script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
-        
-        .option-card.active { border-color: #1D4ED8; background-color: #eff6ff; color: #1D4ED8; box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.1); }
-        .helper-card.active { border-color: #1D4ED8; background-color: #eff6ff; color: #1D4ED8; box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.1); }
-        .payment-card.active { background-color: #1D4ED8; color: white; border-color: #1D4ED8; box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.2); }
-        
-        .expandable { transition: all 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
-        .expandable.open { max-height: 200px; opacity: 1; margin-top: 0.5rem; }
-        
-        .toast-notification {
-            position: fixed; bottom: -150px; left: 50%; transform: translateX(-50%);
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 100; opacity: 0; width: 90%; max-width: 380px;
-        }
-        .toast-notification.show { bottom: 24px; opacity: 1; }
+        body { background-color: #f8fafc; color: #0f172a; font-family: 'Inter', sans-serif; }
+        .dialog-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
+        .hidden { display: none !important; }
+        .spinner { border: 4px solid rgba(29, 78, 216, 0.2); border-left-color: #1D4ED8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="min-h-screen pb-12 pt-6 px-4">
 
-    <div class="sr-only">
-        <h1>Frete Rápido e Seguro</h1>
-        <h2>Transporte de Cargas e Mercadorias</h2>
-        <p>A melhor solução de frete barato, carreto, utilitário para fretes e mudanças completas. Clientou! Serviços Especializados - Atendemos de forma ágil.</p>
+    <div id="loadingView" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
+        <div class="spinner mb-4"></div>
+        <p class="font-black text-primary text-lg animate-pulse tracking-tight">BUSCANDO INFORMAÇÕES...</p>
     </div>
 
-    <header class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-center">
-            <div class="text-center">
-                <h1 class="text-2xl font-black text-primary tracking-tighter">CLIENTOU!</h1>
-                <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
-            </div>
+    <main id="mainView" class="max-w-md mx-auto hidden flex-col gap-5">
+        
+        <header class="text-center mb-2">
+            <h1 class="text-2xl font-black text-primary tracking-tighter">CLIENTOU!</h1>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 -mt-1">Serviços Especializados</p>
+        </header>
+
+        <!-- CARTÃO AGENDADO (Aviso) -->
+        <div id="agendadoWarning" class="hidden bg-yellow-50 border border-yellow-200 p-4 rounded-3xl text-center mb-2">
+            <i data-lucide="alert-triangle" class="w-8 h-8 text-yellow-500 mx-auto mb-2"></i>
+            <h3 class="font-black text-yellow-800 text-sm">SERVIÇO INDISPONÍVEL</h3>
+            <p class="text-xs text-yellow-700 mt-1 font-medium leading-tight">Este frete já foi agendado e concluído por outros prestadores. Siga para o próximo.</p>
         </div>
-    </header>
 
-    <main class="max-w-md mx-auto px-4 mt-6">
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6">
-            <div class="mb-8 border-b border-slate-100 pb-4">
-                <h2 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                    <i data-lucide="package" class="w-6 h-6 text-primary"></i> Frete e Mudanças
-                </h2>
-                <p class="text-slate-500 text-sm font-medium mt-1">Rapidez, Segurança e Facilidade</p>
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6" id="contactCard">
+            <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary border border-blue-100 shadow-sm">
+                    <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <h2 id="clientName" class="text-lg font-black text-slate-800 tracking-tight leading-tight">A carregar...</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Cliente</p>
+                </div>
             </div>
 
-            <form id="freteForm" class="space-y-6">
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Seu Nome</label>
-                    <input type="text" id="name" required placeholder="Como você se chama?" 
-                        class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all text-sm font-medium text-slate-700">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Seu WhatsApp (Com DDD)</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
-                            <i data-lucide="phone" class="w-5 h-5"></i>
-                        </span>
-                        <input type="tel" id="phone" required placeholder="(00) 00000-0000" 
-                            class="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all text-sm font-bold text-slate-700">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="phone" class="w-5 h-5 text-slate-400"></i>
+                        <span id="clientPhone" class="font-bold text-lg tracking-wide text-slate-800">A carregar...</span>
                     </div>
-                    <p class="text-[10px] text-primary font-bold uppercase tracking-wide mt-2 flex items-center gap-1">
-                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> O prestador entrará em contato por este número
-                    </p>
-                </div>
 
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-3">Tipo de Frete</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button type="button" data-value="Apenas Caixas" onclick="selectType('Apenas Caixas')" class="option-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="package-open" class="w-6 h-6"></i>
-                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">Apenas<br>Caixas</span>
-                        </button>
-                        <button type="button" data-value="Alguns Móveis" onclick="selectType('Alguns Móveis')" class="option-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="armchair" class="w-6 h-6"></i>
-                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">Alguns<br>Móveis</span>
-                        </button>
-                        <button type="button" data-value="Frete Grande" onclick="selectType('Frete Grande')" class="option-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="truck" class="w-6 h-6"></i>
-                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">Frete<br>Grande</span>
-                        </button>
-                    </div>
-                    <input type="hidden" id="vehicleType">
-                </div>
+                    <button id="btnPagar" onclick="openPaymentDialog()" class="hidden bg-primary hover:bg-primaryDark text-white px-4 py-2 text-xs font-bold rounded-xl shadow-lg shadow-blue-200 uppercase tracking-wide transform active:scale-95 transition-all">
+                        Desbloquear
+                    </button>
 
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">O que será transportado?</label>
-                    <input type="text" id="vehicleModel" required placeholder="Ex: 1 Armário, 10 Caixas, Geladeira..." 
-                        class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all text-sm font-medium text-slate-700">
-                </div>
+                    <button id="btnMostrar" onclick="revealNumber()" class="hidden bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 text-xs font-bold rounded-xl shadow-md uppercase tracking-wide transform active:scale-95 transition-all">
+                        Mostrar
+                    </button>
 
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Onde buscar?</label>
-                    <div class="relative">
-                        <input type="text" id="origin" required placeholder="Digite o endereço ou use o GPS" 
-                            class="w-full px-4 py-4 pr-14 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all text-sm font-medium text-slate-700">
-                        <button type="button" onclick="getLocation('origin')" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 active:scale-95 transition-transform">
-                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                    <div id="actionButtons" class="hidden flex gap-2">
+                        <button onclick="goToWhatsApp()" class="bg-green-500 text-white p-2.5 rounded-xl shadow-sm hover:bg-green-600 transform active:scale-95 transition-all">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="goToCall()" class="bg-blue-500 text-white p-2.5 rounded-xl shadow-sm hover:bg-blue-600 transform active:scale-95 transition-all">
+                            <i data-lucide="phone-call" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Onde levar?</label>
-                    <div class="relative">
-                        <input type="text" id="destination" required placeholder="Digite o endereço de destino" 
-                            class="w-full px-4 py-4 pr-14 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all text-sm font-medium text-slate-700">
-                        <button type="button" onclick="getLocation('destination')" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 active:scale-95 transition-transform">
-                            <i data-lucide="map-pin" class="w-5 h-5"></i>
-                        </button>
-                    </div>
+                
+                <div id="activeStatus" class="hidden mt-3 text-[11px] font-bold text-green-700 bg-green-100 p-2.5 rounded-xl border border-green-200 flex items-center gap-1.5 uppercase tracking-wide">
+                    <i data-lucide="unlock" class="w-4 h-4 stroke-[2.5]"></i>
+                    Acesso Liberado - Restam <span id="countdownText" class="font-black">--h --m --s</span>
                 </div>
 
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Tem área acessível? (Origem e Destino)</label>
-                    <textarea id="issue" rows="2" placeholder="Ex: Escada no 2º andar, elevador no destino..." 
-                        class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary focus:bg-white outline-none transition-all resize-none text-sm font-medium text-slate-700"></textarea>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-3">Precisa de Ajudante?</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button type="button" data-value="Não" onclick="selectHelper('Não')" class="helper-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="x-circle" class="w-6 h-6"></i>
-                            <span class="text-xs font-bold text-center">Não</span>
-                        </button>
-                        <button type="button" data-value="Sim! Um Ajudante" onclick="selectHelper('Sim! Um Ajudante')" class="helper-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="user" class="w-6 h-6"></i>
-                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">Um<br>Ajudante</span>
-                        </button>
-                        <button type="button" data-value="Sim! Vários Ajudantes" onclick="selectHelper('Sim! Vários Ajudantes')" class="helper-card border border-slate-200 rounded-2xl p-4 flex flex-col items-center gap-2 transition-all bg-white text-slate-500 hover:bg-slate-50">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">Vários<br>Ajudantes</span>
-                        </button>
-                    </div>
-                    <input type="hidden" id="helperRequired">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Quando retirar?</label>
-                    <div class="flex gap-2 p-1.5 bg-slate-100 rounded-2xl">
-                        <button type="button" onclick="setSchedule('AGORA')" id="btnAgora" class="flex-1 py-3 px-4 rounded-xl bg-white shadow-sm font-black text-xs text-primary transition-all uppercase tracking-widest border border-slate-200">AGORA</button>
-                        <button type="button" onclick="setSchedule('AGENDAR')" id="btnAgendar" class="flex-1 py-3 px-4 rounded-xl text-slate-400 font-bold text-xs transition-all uppercase tracking-widest border border-transparent hover:text-slate-600">AGENDAR</button>
-                    </div>
-                    <input type="datetime-local" id="scheduleDate" class="hidden mt-3 w-full px-4 py-4 rounded-2xl border border-slate-200 bg-white focus:ring-2 focus:ring-inset focus:ring-primary outline-none transition-all text-sm font-medium text-slate-700">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-3">Forma de Pagamento</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectPayment('Pix')" class="payment-card border border-slate-200 rounded-2xl px-2 py-4 text-center text-xs font-bold flex flex-col items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-50">
-                            <i data-lucide="qr-code" class="w-5 h-5"></i> Pix
-                        </button>
-                        <button type="button" onclick="selectPayment('Dinheiro')" class="payment-card border border-slate-200 rounded-2xl px-2 py-4 text-center text-xs font-bold flex flex-col items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-50">
-                            <i data-lucide="banknote" class="w-5 h-5"></i> Dinheiro
-                        </button>
-                        <button type="button" onclick="selectPayment('Cartão')" class="payment-card border border-slate-200 rounded-2xl px-2 py-4 text-center text-xs font-bold flex flex-col items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-50">
-                            <i data-lucide="credit-card" class="w-5 h-5"></i> Cartão
-                        </button>
-                    </div>
-
-                    <div id="moneyOptions" class="expandable bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
-                        <label class="block font-bold text-primary uppercase tracking-widest text-[10px] mb-2">Precisa de troco para quanto?</label>
-                        <input type="text" id="changeAmount" placeholder="Ex: R$ 50,00 ou 'Não precisa'" 
-                            class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary outline-none text-sm font-medium">
-                    </div>
-
-                    <div id="cardOptions" class="expandable bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
-                        <label class="block font-bold text-primary uppercase tracking-widest text-[10px] mb-2">Qual tipo de cartão?</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="setCardType('Débito')" class="card-type-btn border border-blue-200 bg-white text-primary rounded-xl py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-sm">
-                                DÉBITO
-                            </button>
-                            <button type="button" onclick="setCardType('Crédito')" class="card-type-btn border border-blue-200 bg-white text-primary rounded-xl py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-sm">
-                                CRÉDITO
-                            </button>
-                        </div>
-                    </div>
-
-                    <input type="hidden" id="paymentMethod">
-                    <input type="hidden" id="finalPaymentDetail">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">Observações</label>
-                    <textarea id="notes" rows="2" placeholder="Algo mais que o prestador precisa saber?" 
-                        class="w-full px-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-inset focus:ring-primary outline-none transition-all resize-none text-sm font-medium text-slate-700"></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-primaryDark text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest mt-4">
-                    <i data-lucide="zap" class="w-5 h-5 fill-white"></i> SOLICITAR AGORA
+                <button id="btnAgendado" onclick="markAsAgendado()" disabled class="hidden mt-3 w-full bg-slate-200 text-slate-400 font-bold text-xs py-3 rounded-xl border border-slate-300 uppercase tracking-wide transition-all flex justify-center items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado
                 </button>
-            </form>
+            </div>
+        </div>
 
-            <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center text-center">
-                <div class="flex gap-4 mb-4">
-                    <a href="https://clientou.online/termos-de-uso" target="_blank" class="text-[10px] text-slate-400 hover:text-primary font-bold uppercase tracking-widest transition-colors">Termos de Uso</a>
-                    <a href="https://clientou.online/politica-de-privacidade" target="_blank" class="text-[10px] text-slate-400 hover:text-primary font-bold uppercase tracking-widest transition-colors">Privacidade</a>
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-4">
+            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
+                <i data-lucide="box" class="w-4 h-4 text-primary"></i> Informações do Frete
+            </h3>
+            
+            <div class="grid grid-cols-1 gap-5">
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tipo de Frete</p><p id="tipoFrete" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
-                <p class="text-slate-400 text-[10px] uppercase font-bold tracking-widest">© 2026 Clientou! Serviços Especializados<br>Todos os direitos reservados</p>
-                <div class="flex justify-center gap-3 mt-3 text-slate-300">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    <i data-lucide="lock" class="w-4 h-4"></i>
+                
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Origem</p><p id="origem" class="font-semibold text-sm text-slate-700">-</p></div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="flag" class="w-3.5 h-3.5 text-primary"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Destino</p><p id="destino" class="font-semibold text-sm text-slate-700">-</p></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-start gap-3">
+                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="navigation" class="w-3.5 h-3.5 text-slate-500"></i>
+                        </div>
+                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Acesso</p><p id="area" class="font-semibold text-sm text-slate-700">-</p></div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
+                        </div>
+                        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ajudante</p><p id="ajudante" class="font-semibold text-sm text-slate-700">-</p></div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Retirada</p><p id="dataRetirada" class="font-semibold text-sm text-slate-700">-</p></div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="banknote" class="w-3.5 h-3.5 text-slate-500"></i>
+                    </div>
+                    <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pagamento</p><p id="pagamento" class="font-semibold text-sm text-slate-700">-</p></div>
                 </div>
             </div>
-
         </div>
+
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-2">
+            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+                <i data-lucide="align-left" class="w-4 h-4 text-primary"></i> Observações
+            </h3>
+            <p id="observacoes" class="text-sm font-medium text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 italic leading-relaxed">-</p>
+        </div>
+
+        <button onclick="goToNextClient()" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-300 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+            Próximo Cliente <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+
     </main>
 
-    <!-- LOADING MODAL -->
-    <div id="loading" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] hidden flex flex-col items-center justify-center">
-        <div class="spinner mb-4"></div>
-        <p class="font-black text-primary text-lg animate-pulse tracking-tight text-center px-4">AGUARDE!<br>ENVIANDO SEU PEDIDO...</p>
-    </div>
-
-    <!-- SUCCESS MODAL -->
-    <div id="successModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[40px] p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100">
-            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <i data-lucide="check" class="w-10 h-10 stroke-[3]"></i>
+    <div id="paymentDialog" class="fixed inset-0 dialog-backdrop hidden flex items-center justify-center p-4 z-[110]">
+        <div class="bg-white rounded-[40px] w-full max-w-sm shadow-2xl overflow-hidden transform transition-all border border-slate-100 relative">
+            <div class="bg-primary text-white p-6 text-center relative">
+                <button onclick="closePaymentDialog()" class="absolute top-5 right-5 text-blue-200 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
+                </button>
+                <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
             </div>
-            <h3 class="text-2xl font-black mb-2 text-slate-800 tracking-tight">PEDIDO ENVIADO!</h3>
-            <p class="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Nossos prestadores foram notificados. Aguarde o contato em seu WhatsApp!</p>
-            <button onclick="window.location.reload()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg transform transition active:scale-95">
-                OK, ENTENDI
-            </button>
-        </div>
-    </div>
+            
+            <div class="p-8 flex flex-col items-center gap-5 text-center">
+                <div id="precoDisplay" class="bg-slate-50 text-slate-800 border border-slate-200 font-black text-3xl py-3 px-8 rounded-2xl inline-block shadow-sm">
+                    R$ ...
+                </div>
+                
+                <p class="text-xs font-medium text-slate-500 leading-relaxed">Efetue o pagamento via PIX utilizando o QR Code abaixo ou Copia e Cola.</p>
 
-    <!-- NOTIFICAÇÃO FAKE -->
-    <div id="fakeToast" class="toast-notification bg-white rounded-3xl shadow-xl border border-slate-100 p-4 flex items-center gap-4">
-        <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <i data-lucide="bell-ring" class="w-5 h-5"></i>
-        </div>
-        <div>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5" id="toastName">Nome da pessoa</p>
-            <p class="text-xs font-bold text-slate-700 leading-tight">Solicitou agora um: <span id="toastProblem" class="text-primary font-black">Serviço</span></p>
+                <div class="relative w-full flex justify-center">
+                    <div id="qrCodeContainer" class="w-48 h-48 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-200 p-2 transition-all">
+                        <div class="spinner w-8 h-8"></div>
+                    </div>
+                    
+                    <div id="qrExpiredOverlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl hidden flex-col items-center justify-center z-10 p-4 border border-slate-100">
+                        <i data-lucide="alert-circle" class="w-8 h-8 text-red-500 mb-2"></i>
+                        <p class="text-xs font-bold text-slate-800 mb-3">O código expirou</p>
+                        <button onclick="openPaymentDialog()" class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transform active:scale-95">Gerar Novo PIX</button>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pix Copia e Cola</label>
+                        <span id="pixTimer" class="text-[10px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 hidden">Expira em 15:00</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="pixCodeInput" readonly class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl text-xs font-medium focus:ring-0 outline-none truncate text-slate-600" placeholder="A gerar código...">
+                        <button onclick="copyPix()" class="bg-slate-900 text-white p-4 rounded-2xl hover:bg-slate-800 flex-shrink-0 shadow-md transform active:scale-95 transition-all">
+                            <i data-lucide="copy" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 mt-2 animate-pulse bg-blue-50 px-4 py-2 rounded-xl">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> A aguardar Pagamento...
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev';
+        // 🔴 CONFIGURAÇÃO: Coloque aqui a URL do seu Worker
+        const WORKER_URL = 'https://clientou-fretes.grupo-bhds.workers.dev'; 
+        
+        let paymentInterval;
+        let countdownInterval;
+        let pixExpireInterval;
+        let activeProviderId = null;
+        let realWhatsappNumber = "";
 
-        let selectedType = '';
-        let selectedHelper = ''; 
-        let selectedPayment = ''; 
-        let selectedCardDetail = ''; 
-        let schedule = 'AGORA';
-
-        function selectType(type) {
-            selectedType = type;
-            document.getElementById('vehicleType').value = type;
-            document.querySelectorAll('.option-card').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.value === type);
-            });
+        function generateId18() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let res = '';
+            for(let i=0; i<18; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            return res;
         }
 
-        function selectHelper(helper) {
-            selectedHelper = helper;
-            document.getElementById('helperRequired').value = helper;
-            document.querySelectorAll('.helper-card').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.value === helper);
-            });
+        function getParams() {
+            const params = new URLSearchParams(window.location.search);
+            return { c: params.get('c'), p: params.get('p') };
         }
 
-        function selectPayment(method) {
-            selectedPayment = method;
-            document.getElementById('paymentMethod').value = method;
-            
-            document.querySelectorAll('.payment-card').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.includes(method));
-            });
+        function redirectTo404() {
+            window.location.href = 'https://clientou.online/404';
+        }
 
-            const moneyOpts = document.getElementById('moneyOptions');
-            const cardOpts = document.getElementById('cardOptions');
-            
-            selectedCardDetail = ''; 
-            document.querySelectorAll('.card-type-btn').forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.classList.add('bg-white', 'text-primary');
-            });
-            document.getElementById('changeAmount').value = '';
+        function initializeProviderId() {
+            let localId = localStorage.getItem('provider_id');
+            const params = getParams();
+            let urlId = params.p;
+            let clientId = params.c;
 
-            if (method === 'Dinheiro') {
-                moneyOpts.classList.add('open');
-                cardOpts.classList.remove('open');
-            } else if (method === 'Cartão') {
-                cardOpts.classList.add('open');
-                moneyOpts.classList.remove('open');
+            if (localId) {
+                activeProviderId = localId;
+            } else if (urlId && urlId.length >= 18) {
+                activeProviderId = urlId;
             } else {
-                moneyOpts.classList.remove('open');
-                cardOpts.classList.remove('open');
+                activeProviderId = generateId18();
+            }
+
+            if (clientId) {
+                const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
+                window.history.replaceState(null, '', newUrl);
             }
         }
 
-        function setCardType(type) {
-            selectedCardDetail = type;
-            document.querySelectorAll('.card-type-btn').forEach(btn => {
-                if(btn.textContent.includes(type.toUpperCase())) {
-                    btn.classList.remove('bg-white', 'text-primary');
-                    btn.classList.add('bg-primary', 'text-white', 'border-transparent');
-                } else {
-                    btn.classList.add('bg-white', 'text-primary');
-                    btn.classList.remove('bg-primary', 'text-white', 'border-transparent');
+        // LIMPEZA FORÇADA PARA O FORMATO DA DATA EXIBIDA NO SITE
+        function formatDateOnly(dateString) {
+            if(!dateString) return '-';
+            const str = String(dateString).trim();
+            try {
+                // Tenta extrair a data que vem no formato BR "DD/MM/YYYY HH:MM:SS"
+                if (str.includes('/')) {
+                   const parts = str.split(' ')[0].split('/');
+                   if (parts.length === 3) return `${parts[0]}/${parts[1]}/${parts[2]}`;
                 }
-            });
-        }
-
-        function setSchedule(mode) {
-            schedule = mode;
-            const btnA = document.getElementById('btnAgora');
-            const btnAg = document.getElementById('btnAgendar');
-            const dateInput = document.getElementById('scheduleDate');
-
-            if(mode === 'AGORA') {
-                btnA.classList.add('bg-white', 'shadow-sm', 'text-primary', 'border-slate-200');
-                btnA.classList.remove('text-slate-400', 'border-transparent');
-                btnAg.classList.remove('bg-white', 'shadow-sm', 'text-primary', 'border-slate-200');
-                btnAg.classList.add('text-slate-400', 'border-transparent');
-                dateInput.classList.add('hidden');
-            } else {
-                btnAg.classList.add('bg-white', 'shadow-sm', 'text-primary', 'border-slate-200');
-                btnAg.classList.remove('text-slate-400', 'border-transparent');
-                btnA.classList.remove('bg-white', 'shadow-sm', 'text-primary', 'border-slate-200');
-                btnA.classList.add('text-slate-400', 'border-transparent');
-                dateInput.classList.remove('hidden');
-            }
-        }
-
-        async function getLocation(fieldId) {
-            const btn = event.currentTarget;
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
-            lucide.createIcons();
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    document.getElementById(fieldId).value = `https://www.google.com/maps?q=${lat},${lon}`;
-                    btn.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-white"></i>';
-                    lucide.createIcons();
-                }, () => {
-                    alert("Acesso à localização negado. Digite o endereço manualmente.");
-                    btn.innerHTML = originalIcon;
-                }, { timeout: 10000 });
-            }
-        }
-
-        const fakeNames = ["João C.", "Maria S.", "Roberto T.", "Ana L.", "Carlos E.", "Lucas M.", "Fernanda P.", "Gabriel K.", "Thiago R.", "Juliana M."];
-        const fakeProblems = ["Mudança Residencial", "Frete de Geladeira", "Transporte de Sofá", "Carreto Rápido", "Mudança Comercial", "Frete Grande", "Transporte de Caixas"];
-
-        function showFakeNotification() {
-            const name = fakeNames[Math.floor(Math.random() * fakeNames.length)];
-            const problem = fakeProblems[Math.floor(Math.random() * fakeProblems.length)];
-            
-            document.getElementById('toastName').innerText = name + " agora mesmo!";
-            document.getElementById('toastProblem').innerText = problem;
-            
-            const toast = document.getElementById('fakeToast');
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 6000); 
-        }
-
-        setTimeout(() => {
-            showFakeNotification();
-            setInterval(showFakeNotification, 60000);
-        }, 15000);
-
-        document.getElementById('freteForm').onsubmit = async (e) => {
-            e.preventDefault();
-            
-            if(!selectedType) { alert("Selecione o tipo de frete."); return; }
-            if(!selectedHelper) { alert("Selecione se precisa de ajudante."); return; }
-            if(!selectedPayment) { alert("Selecione a forma de pagamento."); return; }
-            
-            if (schedule === 'AGENDAR') {
-                if (!document.getElementById('scheduleDate').value) { 
-                    alert("Defina a data e o horário do agendamento."); return; 
+                const d = new Date(str);
+                if (!isNaN(d.getTime())) {
+                    const dia = d.getDate().toString().padStart(2, '0');
+                    const mes = (d.getMonth() + 1).toString().padStart(2, '0');
+                    const ano = d.getFullYear();
+                    return `${dia}/${mes}/${ano}`;
                 }
+            } catch(e){}
+            return str.split(' ')[0].split('T')[0];
+        }
+
+        function startCountdown(inativacaoISO) {
+            clearInterval(countdownInterval);
+            const el = document.getElementById('countdownText');
+            const limitDate = new Date(inativacaoISO);
+            
+            function update() {
+                const now = new Date();
+                const diff = limitDate - now;
+                
+                if(diff <= 0) {
+                    el.innerText = "Expirado";
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                el.innerText = `${h}h ${m}m ${s}s`;
             }
             
-            let finalPaymentString = selectedPayment;
+            update();
+            countdownInterval = setInterval(update, 1000); 
+        }
+
+        function startPixExpirationTimer() {
+            clearInterval(pixExpireInterval);
+            let timeLeft = 15 * 60; 
+            const timerEl = document.getElementById('pixTimer');
+            timerEl.classList.remove('hidden');
+            document.getElementById('qrExpiredOverlay').classList.add('hidden');
             
-            if (selectedPayment === 'Cartão') {
-                if (!selectedCardDetail) { alert("Selecione Débito ou Crédito."); return; }
-                finalPaymentString = `Cartão (${selectedCardDetail})`;
-            } else if (selectedPayment === 'Dinheiro') {
-                const change = document.getElementById('changeAmount').value;
-                finalPaymentString = change ? `Dinheiro (Troco para: ${change})` : `Dinheiro (Sem troco)`;
-            }
+            pixExpireInterval = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                timerEl.innerText = `Expira em ${m}:${s}`;
+                
+                if(timeLeft <= 0) {
+                    clearInterval(pixExpireInterval);
+                    clearInterval(paymentInterval);
+                    timerEl.innerText = "Expirado";
+                    document.getElementById('qrExpiredOverlay').classList.remove('hidden');
+                    document.getElementById('qrExpiredOverlay').classList.add('flex');
+                    document.getElementById('pixCodeInput').value = "";
+                }
+            }, 1000);
+        }
 
-            const loading = document.getElementById('loading');
-            loading.classList.remove('hidden');
+        function resetActionButtons() {
+            document.getElementById('btnMostrar').classList.add('hidden');
+            document.getElementById('btnPagar').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            
+            const btnAgendado = document.getElementById('btnAgendado');
+            btnAgendado.classList.add('hidden');
+            btnAgendado.disabled = true;
+            btnAgendado.classList.remove('bg-green-500', 'text-white', 'border-green-600', 'hover:bg-green-600');
+            btnAgendado.classList.add('bg-slate-200', 'text-slate-400', 'border-slate-300');
+            btnAgendado.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+        }
 
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                type: selectedType,
-                model: document.getElementById('vehicleModel').value,
-                origin: document.getElementById('origin').value,
-                destination: document.getElementById('destination').value,
-                issue: document.getElementById('issue').value,
-                helper: selectedHelper,
-                schedule: schedule === 'AGORA' ? 'Agora (Imediato)' : document.getElementById('scheduleDate').value,
-                payment: finalPaymentString, 
-                notes: document.getElementById('notes').value
-            };
+        async function loadClientData() {
+            const params = getParams();
+            if (!params.c) { redirectTo404(); return; }
+
+            initializeProviderId();
+            const clientId = params.c;
+            resetActionButtons();
 
             try {
-                // Remove a barra do final, se houver
                 const baseUrl = WORKER_URL.replace(/\/$/, '');
-                
-                const response = await fetch(`${baseUrl}/api/new-client`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                const response = await fetch(`${baseUrl}/api/client/${clientId}`, {
+                    headers: { 'x-provider-id': activeProviderId }
                 });
+                const data = await response.json();
 
-                if (response.ok) {
-                    gtag('event', 'conversion', {
-                        'send_to': 'AW-17688764045/gWQtCKnghfgbEI291PJB', 'value': 1.0, 'currency': 'BRL'
-                    });
-                    document.getElementById('successModal').classList.remove('hidden');
+                if (data.error) {
+                    if (data.error === 'CLIENT_NOT_FOUND') { redirectTo404(); return; }
+                    document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Falha do Servidor:<br>${data.error}</p>`;
+                    return;
+                }
+
+                if(data.config) {
+                    const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.config.valorDiaria);
+                    document.getElementById('precoDisplay').innerText = valorFormatado;
+                    document.getElementById('popupText').innerText = data.config.horaLimite + " horas";
+                }
+
+                if (!data.access.active) {
+                    if (localStorage.getItem('provider_id')) {
+                        localStorage.removeItem('provider_id');
+                        activeProviderId = generateId18();
+                        const newUrl = `${window.location.pathname}?c=${clientId}&p=${activeProviderId}`;
+                        window.history.replaceState(null, '', newUrl);
+                    }
                 } else {
-                    alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+                    localStorage.setItem('provider_id', activeProviderId);
+                }
+
+                document.getElementById('clientName').innerText = data.client.nome || '-';
+                document.getElementById('tipoFrete').innerText = data.client.tipoFrete || '-';
+                document.getElementById('origem').innerText = data.client.origem || '-';
+                document.getElementById('destino').innerText = data.client.destino || '-';
+                document.getElementById('area').innerText = data.client.areaAcessivel || '-';
+                document.getElementById('ajudante').innerText = data.client.ajudante || '-';
+                document.getElementById('dataRetirada').innerText = formatDateOnly(data.client.dataRetirada);
+                document.getElementById('pagamento').innerText = data.client.pagamento || '-';
+                document.getElementById('observacoes').innerText = data.client.observacoes || '-';
+
+                const phoneEl = document.getElementById('clientPhone');
+                const statusEl = document.getElementById('activeStatus');
+                const warningAgendado = document.getElementById('agendadoWarning');
+                const contactCard = document.getElementById('contactCard');
+
+                phoneEl.innerText = data.client.whatsapp; 
+
+                if (data.client.isAgendado) {
+                    warningAgendado.classList.remove('hidden');
+                    contactCard.classList.add('hidden');
+                    statusEl.classList.add('hidden');
+                } else {
+                    warningAgendado.classList.add('hidden');
+                    contactCard.classList.remove('hidden');
+
+                    if (data.access.active) {
+                        statusEl.classList.remove('hidden');
+                        document.getElementById('btnMostrar').classList.remove('hidden');
+                        startCountdown(data.access.inativacao); 
+                        // BLINDAGEM DO WHATSAPP (Evita erro fatal se a planilha enviar como Número em vez de Texto)
+                        realWhatsappNumber = String(data.client.whatsapp).replace(/\D/g, ''); 
+                    } else {
+                        statusEl.classList.add('hidden');
+                        document.getElementById('btnPagar').classList.remove('hidden');
+                    }
+                }
+
+                document.getElementById('loadingView').classList.add('hidden');
+                document.getElementById('mainView').classList.remove('hidden');
+                document.getElementById('mainView').classList.add('flex');
+                lucide.createIcons();
+
+            } catch (error) {
+                // Alerta elegante para evitar jargões
+                alert("Erro de conexão. Verifique sua internet.");
+                document.getElementById('loadingView').innerHTML = `<p class="font-bold text-red-500 text-center px-4">Verifique sua conexão e recarregue a página.</p>`;
+            }
+        }
+
+        async function revealNumber() {
+            const params = getParams();
+            const btnMostrar = document.getElementById('btnMostrar');
+            const phoneEl = document.getElementById('clientPhone');
+            const actionBtns = document.getElementById('actionButtons');
+            const btnAgendado = document.getElementById('btnAgendado');
+
+            btnMostrar.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
+            lucide.createIcons();
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                await fetch(`${baseUrl}/api/register-view/${params.c}`, { method: 'POST', headers: { 'x-provider-id': activeProviderId } });
+                
+                btnMostrar.classList.add('hidden');
+                actionBtns.classList.remove('hidden');
+                btnAgendado.classList.remove('hidden');
+                
+                phoneEl.innerText = realWhatsappNumber; 
+
+            } catch (e) {
+                alert("Erro ao revelar número. Verifique sua internet.");
+                btnMostrar.innerText = 'Mostrar';
+            }
+        }
+
+        function enableAgendadoButton() {
+            const btn = document.getElementById('btnAgendado');
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-200', 'text-slate-400', 'border-slate-300');
+            btn.classList.add('bg-green-500', 'text-white', 'border-green-600', 'hover:bg-green-600', 'cursor-pointer');
+        }
+
+        function goToWhatsApp() {
+            enableAgendadoButton();
+            window.open(`https://wa.me/55${realWhatsappNumber}`, '_blank');
+        }
+
+        function goToCall() {
+            enableAgendadoButton();
+            window.open(`tel:+55${realWhatsappNumber}`, '_self');
+        }
+
+        async function markAsAgendado() {
+            const params = getParams();
+            const btn = document.getElementById('btnAgendado');
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Salvando...';
+            lucide.createIcons();
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const req = await fetch(`${baseUrl}/api/schedule-client/${params.c}`, { 
+                    method: 'POST', headers: { 'x-provider-id': activeProviderId } 
+                });
+                const res = await req.json();
+
+                if (res.success) {
+                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Registrado com Sucesso';
+                    btn.classList.replace('bg-green-500', 'bg-slate-900');
+                    btn.classList.replace('hover:bg-green-600', 'hover:bg-slate-800');
+                    btn.disabled = true;
+                    lucide.createIcons();
+                } else if (res.message) {
+                    alert(res.message);
+                    btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                alert("Erro ao salvar. Verifique a conexão.");
+                btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
+                lucide.createIcons();
+            }
+        }
+
+        async function openPaymentDialog() {
+            const dialog = document.getElementById('paymentDialog');
+            dialog.classList.remove('hidden');
+            
+            const qrContainer = document.getElementById('qrCodeContainer');
+            const pixInput = document.getElementById('pixCodeInput');
+            
+            document.getElementById('qrExpiredOverlay').classList.add('hidden');
+            document.getElementById('qrExpiredOverlay').classList.remove('flex');
+            document.getElementById('pixTimer').classList.add('hidden');
+            
+            qrContainer.innerHTML = '<div class="spinner w-8 h-8"></div>';
+            pixInput.value = '';
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/api/pay`, {
+                    method: 'POST',
+                    headers: { 'x-provider-id': activeProviderId }
+                });
+                const data = await response.json();
+
+                if(data.payload && data.paymentId) {
+                    qrContainer.innerHTML = ''; 
+                    new QRCode(qrContainer, {
+                        text: data.payload, width: 170, height: 170, colorDark : "#0f172a", colorLight : "#f8fafc"
+                    });
+                    
+                    pixInput.value = data.payload;
+                    startPaymentVerification(data.paymentId);
+                    startPixExpirationTimer(); 
+
+                } else if(data.error) {
+                    qrContainer.innerHTML = `<div class="overflow-y-auto p-2 text-center w-full h-full flex flex-col justify-center"><p class="text-[10px] text-red-500 font-bold break-words">Falha:<br>${data.error}</p></div>`;
+                }
+            } catch (error) {
+                qrContainer.innerHTML = `<p class="text-[10px] text-red-500 font-bold p-2 text-center">Falha de requisição: Verifique sua internet.</p>`;
+            }
+        }
+
+        function closePaymentDialog() {
+            document.getElementById('paymentDialog').classList.add('hidden');
+            clearInterval(paymentInterval);
+            clearInterval(pixExpireInterval);
+        }
+
+        function copyPix() {
+            const copyText = document.getElementById("pixCodeInput");
+            if (!copyText.value) return;
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+            
+            const btn = event.currentTarget;
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-green-400"></i>';
+            lucide.createIcons();
+            setTimeout(() => { btn.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
+        }
+
+        function startPaymentVerification(paymentId) {
+            clearInterval(paymentInterval);
+            paymentInterval = setInterval(async () => {
+                const params = getParams();
+                if(!params.c || !paymentId) return;
+                
+                try {
+                    const baseUrl = WORKER_URL.replace(/\/$/, '');
+                    const response = await fetch(`${baseUrl}/api/check-payment/${paymentId}`, {
+                        headers: { 'x-provider-id': activeProviderId }
+                    });
+                    const data = await response.json();
+                    
+                    if (data.active) {
+                        clearInterval(paymentInterval);
+                        clearInterval(pixExpireInterval);
+                        localStorage.setItem('provider_id', activeProviderId);
+                        closePaymentDialog();
+                        
+                        document.getElementById('loadingView').classList.remove('hidden');
+                        document.getElementById('mainView').classList.add('hidden');
+                        loadClientData();
+                    }
+                } catch(e) {}
+            }, 5000);
+        }
+
+        async function goToNextClient() {
+            const params = getParams();
+            if (!params.c) return;
+
+            document.getElementById('mainView').classList.add('hidden');
+            document.getElementById('loadingView').classList.remove('hidden');
+
+            try {
+                const baseUrl = WORKER_URL.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/api/next/${params.c}`);
+                const data = await response.json();
+
+                if (data.nextId) {
+                    window.location.href = `${window.location.pathname}?c=${data.nextId}&p=${activeProviderId}`;
+                } else {
+                    alert("Você já viu todos os clientes disponíveis!");
+                    document.getElementById('loadingView').classList.add('hidden');
+                    document.getElementById('mainView').classList.remove('hidden');
                 }
             } catch (err) {
-                alert("Erro de conexão. Verifique sua internet.");
-            } finally {
-                loading.classList.add('hidden');
+                alert("Erro ao buscar próximo cliente. Verifique sua internet.");
+                document.getElementById('loadingView').classList.add('hidden');
+                document.getElementById('mainView').classList.remove('hidden');
             }
-        };
+        }
+
+        window.onload = loadClientData;
     </script>
 </body>
 </html>
