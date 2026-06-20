@@ -2,7 +2,7 @@
 <!-- 
   ============================================================================
   CLIENTOU! - FRONTEND PREMIUM (PRESTADOR)
-  Cronômetro Removido e Trava do WhatsApp Rigorosamente Aplicada
+  Sem Cronômetro e com Máscara Segura no Primeiro Carregamento
   ============================================================================
 -->
 <html lang="pt-BR">
@@ -95,6 +95,8 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- REMOVIDO: O bloco <div id="activeStatus"> contendo o cronômetro foi apagado daqui -->
 
                 <button id="btnAgendado" onclick="markAsAgendado()" disabled class="hidden mt-3 w-full bg-slate-200 text-slate-400 font-bold text-xs py-3 rounded-xl border border-slate-300 uppercase tracking-wide transition-all flex justify-center items-center gap-2">
                     <i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado
@@ -180,7 +182,7 @@
                     <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
                 <h2 class="text-2xl font-black tracking-tight mb-1">Desbloquear WhatsApp</h2>
-                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado á todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
+                <p class="text-xs font-medium text-blue-100 leading-tight">Tenha acesso ilimitado a todos os números de WhatsApp por <span id="popupText" class="font-bold text-yellow-300 inline-block">24 horas</span></p>
             </div>
             
             <div class="p-8 flex flex-col items-center gap-5 text-center">
@@ -233,6 +235,7 @@
         let pixExpireInterval;
         let activeProviderId = null;
         let realWhatsappNumber = "";
+        let displayWhatsappNumber = "";
 
         function generateId18() {
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -321,6 +324,15 @@
             btnAgendado.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> Cliente Agendado';
         }
 
+        // FUNÇÃO PARA MASCARAR O NÚMERO
+        function applyMask(numberStr) {
+            const str = String(numberStr).trim();
+            if(str.length >= 8) {
+                return str.substring(0, str.length - 4) + '-****';
+            }
+            return '***';
+        }
+
         async function loadClientData() {
             const params = getParams();
             if (!params.c) { redirectTo404(); return; }
@@ -373,12 +385,11 @@
                 const warningAgendado = document.getElementById('agendadoWarning');
                 const contactCard = document.getElementById('contactCard');
 
-                let rawPhone = String(data.client.whatsapp);
-
                 if (data.client.isAgendado) {
                     warningAgendado.classList.remove('hidden');
                     contactCard.classList.add('hidden');
-                    phoneEl.innerText = rawPhone; 
+                    
+                    phoneEl.innerText = applyMask(data.client.whatsapp); 
                 } else {
                     warningAgendado.classList.add('hidden');
                     contactCard.classList.remove('hidden');
@@ -386,20 +397,15 @@
                     if (data.access.active) {
                         document.getElementById('btnMostrar').classList.remove('hidden');
                         
-                        // Guarda o número real na memória secreta
-                        realWhatsappNumber = rawPhone.replace(/\D/g, ''); 
+                        displayWhatsappNumber = String(data.client.whatsapp);
+                        realWhatsappNumber = displayWhatsappNumber.replace(/\D/g, ''); 
                         
-                        // FORÇA A MÁSCARA NA TELA PARA NÃO MOSTRAR ANTES DO CLIQUE!
-                        if (rawPhone.length >= 8 && !rawPhone.includes('*')) {
-                            const prefix = rawPhone.substring(0, rawPhone.length - 4);
-                            phoneEl.innerText = prefix + '-****';
-                        } else {
-                            phoneEl.innerText = rawPhone;
-                        }
+                        // FORÇA A MÁSCARA NA TELA ENQUANTO NÃO CLICA NO MOSTRAR
+                        phoneEl.innerText = applyMask(data.client.whatsapp);
 
                     } else {
                         document.getElementById('btnPagar').classList.remove('hidden');
-                        phoneEl.innerText = rawPhone; // Já veio mascarado do backend
+                        phoneEl.innerText = applyMask(data.client.whatsapp); 
                     }
                 }
 
@@ -432,8 +438,7 @@
                 actionBtns.classList.remove('hidden');
                 btnAgendado.classList.remove('hidden');
                 
-                // Só agora o número real é injetado na tela!
-                phoneEl.innerText = realWhatsappNumber; 
+                phoneEl.innerText = displayWhatsappNumber; 
 
             } catch (e) {
                 alert("Erro ao revelar número. Verifique sua internet.");
